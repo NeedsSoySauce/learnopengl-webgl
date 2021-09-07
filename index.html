@@ -7,7 +7,21 @@
         <script defer src="index.js"></script>
 
         <title>learnopengl</title>
+
+        <link rel="stylesheet" href="style.css" />
     </head>
     <body>
+        <div>
+            <button id="render-loop-toggle">Start</button>
+            <button id="clear">Clear</button>
+        </div>
+        <div id="performance">
+            <span>Delta time (ms)</span>
+            <span id="deltaTime"></span>
+        </div>
+        <canvas width="800" height="600"></canvas>
+        <label for="object">Select a file (.obj)</label>
+        <input type="file" id="object" name="avatar" accept=".obj" />
+        <pre></pre>
     </body>
 </html>
