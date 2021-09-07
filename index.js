@@ -25,7 +25,7 @@ class RenderLoop {
         const deltaTime = timestamp - this.msPreviousFrame;
         this.msPreviousFrame = timestamp;
 
-        this.callback(deltaTime);
+        this.callback(deltaTime / 1000);
 
         if (this.isActive) window.requestAnimationFrame(this.renderFunction.bind(this));
     }
@@ -117,29 +117,6 @@ class ShaderUtil {
 
     /**
      * @param {WebGL2RenderingContext} gl
-     * @param {WebGLProgram} program
-     * @param {number} size size of each group of vertex attributes (1, 2, 3, or 4)
-     */
-    static setupWebGL(gl, program, size = 3) {
-        gl.useProgram(program);
-
-        // Setup attributes (these are used to tell WebGL how to interpret our data)
-        const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-        const buffer = gl.createBuffer();
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.enableVertexAttribArray(positionAttributeLocation);
-
-        // Tell WebGL how to read values for the above attribute from out input
-        const type = gl.FLOAT; // the data is 32bit floats
-        const normalize = false; // don't normalize the data
-        const stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
-        const vertexAttribPointerOffset = 0; // start at the beginning of the buffer
-        gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, vertexAttribPointerOffset);
-    }
-
-    /**
-     * @param {WebGL2RenderingContext} gl
      * @param {Float32Array} array
      * @param {number} usage For example gl.STATIC_DRAW or gl.DYNAMIC_DRAW
      * @returns {WebGLBuffer}
@@ -180,13 +157,15 @@ const vertexShaderSource = `#version 300 es
 // an attribute is an input (in) to a vertex shader.
 // It will receive data from a buffer
 in vec4 a_position;
+
+uniform float u_scale;
  
 // all shaders have a main function
 void main() {
- 
+//  float scale = 2.0;
   // gl_Position is a special variable a vertex shader
   // is responsible for setting
-  gl_Position = a_position;
+  gl_Position = a_position * vec4(u_scale, u_scale, u_scale, 1);
 }
 `;
 
@@ -226,23 +205,44 @@ function main() {
     const program = ShaderUtil.createProgram(gl, vertexShader, fragmentShader);
 
     const size = 3;
-    ShaderUtil.setupWebGL(gl, program, size);
+
+    gl.useProgram(program);
+
+    // Setup attributes (these are used to tell WebGL how to interpret our data)
+    const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+    const scaleAttributeLocation = gl.getUniformLocation(program, 'u_scale');
+    const buffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.enableVertexAttribArray(positionAttributeLocation);
+
+    // Tell WebGL how to read values for the above attribute from out input
+    const type = gl.FLOAT; // the data is 32bit floats
+    const normalize = false; // don't normalize the data
+    const stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
+    const vertexAttribPointerOffset = 0; // start at the beginning of the buffer
+    gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, vertexAttribPointerOffset);
+
+    let vertexCoords = [0, 0, 0, 0, 0.5, 0, 0.7, 0, 0];
+
+    let x = 0;
 
     const renderFunction = (deltaTime) => {
         ShaderUtil.clear(gl);
-
-        let vertexCoords = [0, 0, 0, 0, 0.5, 0, 0.7, 0, 0];
+        x += deltaTime;
+        gl.uniform1f(scaleAttributeLocation, 1 + Math.sin(x * 20) * 0.5);
+        let coords = vertexCoords.map((c) => c);
         ShaderUtil.draw(gl, vertexCoords, size);
     };
 
     // Render loop
     let isLooping = false;
     const renderLoopToggleHtmlButtonElement = document.querySelector('#render-loop-toggle');
-    const clearHtmlButtonElement = document.querySelector('#clear');
+    const resetHtmlButtonElement = document.querySelector('#reset');
     const deltaTimeHtmlSpanElement = document.querySelector('#deltaTime');
 
     const renderLoop = new RenderLoop((deltaTime) => {
-        deltaTimeHtmlSpanElement.textContent = `${deltaTime.toFixed(2)}`;
+        deltaTimeHtmlSpanElement.textContent = `${(deltaTime * 1000).toFixed(2)}`;
         renderFunction(deltaTime);
     }, 60);
 
@@ -257,106 +257,9 @@ function main() {
         }
     });
 
-    clearHtmlButtonElement.addEventListener('click', () => ShaderUtil.clear(gl));
-
-    // // Setup attributes (these are used to tell WebGL how to interpret our data)
-    // const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-
-    // // Create something we can store our position vertices in
-    // const positionBuffer = gl.createBuffer();
-
-    // // Tell WebGL to treat our positon buffer as an array buffer
-    // gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-
-    // const positions = [0, 0, 0, 0.5, 0.7, 0];
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-
-    // const vao = gl.createVertexArray();
-    // gl.bindVertexArray(vao);
-    // gl.enableVertexAttribArray(positionAttributeLocation);
-
-    // const size = 2; // 2 components per iteration
-    // const type = gl.FLOAT; // the data is 32bit floats
-    // const normalize = false; // don't normalize the data
-    // const stride = 0; // 0 = move forward size * sizeof(type) each iteration to get the next position
-    // const vertexAttribPointerOffset = 0; // start at the beginning of the buffer
-    // gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, vertexAttribPointerOffset);
-
-    // gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-
-    // // Clear the canvas
-    // gl.clearColor(0, 0, 0, 0);
-    // gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // // Tell it to use our program (pair of shaders)
-    // gl.useProgram(program);
-
-    // // Bind the attribute/buffer set we want.
-    // // gl.bindVertexArray(vao);
-
-    // const primitiveType = gl.TRIANGLES;
-    // const drawArraysOffset = 0;
-    // const count = 3;
-    // gl.drawArrays(primitiveType, drawArraysOffset, count);
-
-    // // Set clear color to black, fully opaque
-    // gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    // // Clear the color buffer with specified clear color
-    // gl.clear(gl.COLOR_BUFFER_BIT);
-
-    // // Automatic formatting can make it hard to read arrays of vertex data
-    // // let vertices = new Float32Array([
-    // //   -0.5, -0.5, 0.0,
-    // //    0.0,  0.5, 0.0,
-    // //    0.5, -0.5, 0.0
-    // // ]);
-    // let vertices = new Float32Array([-0.5, -0.5, 0.0, 0.0, 0.5, 0.0, 0.5, -0.5, 0.0]);
-
-    // let bufferId = gl.createBuffer();
-
-    // gl.bindBuffer(gl.ARRAY_BUFFER, bufferId);
-    // gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-    // gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
-    // gl.enableVertexAttribArray(0);
-
-    // // Setup vertex shader
-    // const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    // gl.shaderSource(vertexShader, vertexShaderSource);
-    // gl.compileShader(vertexShader);
-
-    // if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-    //     console.error('Failed to compile vertex shader: ' + gl.getShaderInfoLog(vertexShader));
-    //     gl.deleteShader(vertexShader);
-    //     return;
-    // }
-
-    // // Setup fragment shader
-    // const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    // gl.shaderSource(fragmentShader, fragmentShaderSource);
-    // gl.compileShader(fragmentShader);
-
-    // if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-    //     console.error('Failed to compile fragment shader: ' + gl.getShaderInfoLog(fragmentShader));
-    //     gl.deleteShader(fragmentShader);
-    //     return;
-    // }
-
-    // // Setup shader program
-    // const shaderProgram = gl.createProgram();
-    // gl.attachShader(shaderProgram, vertexShader);
-    // gl.attachShader(shaderProgram, fragmentShader);
-    // gl.linkProgram(shaderProgram);
-
-    // if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    //     console.error('Failed to initialize shader program: ' + gl.getProgramInfoLog(shaderProgram));
-    //     return;
-    // }
-
-    // gl.useProgram(shaderProgram);
-
-    // // Render the attached VBO
-    // gl.drawArrays(gl.TRIANGLES, 0, vertices.length);
+    resetHtmlButtonElement.addEventListener('click', () => {
+        ShaderUtil.clear(gl);
+    });
 
     input.addEventListener('change', (e) => {
         if (e.target.files.length !== 1) return;
