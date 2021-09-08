@@ -12,6 +12,10 @@ class Matrix {
             throw Error(`Values must be a rectangular array`);
         }
     }
+
+    toString() {
+        return this.values.map((row) => row.map((value) => value.toFixed(1).padStart(5)).join(' ')).join('\n');
+    }
 }
 
 export { Matrix };

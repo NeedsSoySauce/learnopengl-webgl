@@ -7,6 +7,11 @@ const objFileInput = document.querySelector('#object');
 const pre = document.querySelector('pre');
 
 /**
+ * @param {object} obj
+ */
+const log = (obj) => console.log(obj.toString());
+
+/**
  * @param {string} path
  * @returns {Promise<string>}
  */
@@ -130,5 +135,12 @@ const main = async () => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-    main().catch(console.error);
+    // main().catch(console.error);
+
+    const a = new Matrix([
+        [1.4, 2, 3],
+        [-1, 6, 3]
+    ]);
+    console.log(a);
+    log(a);
 });
