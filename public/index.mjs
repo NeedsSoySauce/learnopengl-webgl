@@ -143,4 +143,7 @@ window.addEventListener('DOMContentLoaded', () => {
     ]);
     console.log(a);
     log(a);
+
+    const b = a.multiply(2);
+    log(b);
 });

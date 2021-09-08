@@ -13,8 +13,19 @@ class Matrix {
         }
     }
 
+    /**
+     * @param {(number|Matrix)} multiplier
+     */
+    multiply(multiplier) {
+        if (typeof multiplier === 'number') {
+            return new Matrix(this.values.map((row) => row.map((value) => value * multiplier)));
+        }
+    }
+
     toString() {
-        return this.values.map((row) => row.map((value) => value.toFixed(1).padStart(5)).join(' ')).join('\n');
+        const strVals = this.values.map((row) => row.map((value) => value.toFixed(1)));
+        const padding = Math.max(...strVals.flatMap((row) => row.map((value) => value.length)));
+        return strVals.map((row) => row.map((value) => value.padStart(padding)).join(' ')).join('\n');
     }
 }
 
