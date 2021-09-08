@@ -1,0 +1,24 @@
+{
+  "name": "learnopengl-webgl",
+  "version": "1.0.0",
+  "description": "WebGL > OpenGL because setting up OpenGL development sucks",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -c-1",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NeedsSoySauce/learnopengl-webgl.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NeedsSoySauce/learnopengl-webgl/issues"
+  },
+  "homepage": "https://github.com/NeedsSoySauce/learnopengl-webgl#readme",
+  "devDependencies": {
+    "http-server": "^13.0.1"
+  }
+}
