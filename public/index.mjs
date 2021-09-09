@@ -1,4 +1,4 @@
-import { Matrix, Vector } from './matrix.mjs';
+import { Matrix, Vector, Vector3 } from './matrix.mjs';
 import { ShaderUtil } from './util.mjs';
 import { RenderLoop } from './render.mjs';
 
@@ -137,29 +137,36 @@ const main = async () => {
 window.addEventListener('DOMContentLoaded', () => {
     // main().catch(console.error);
 
-    const matrixA = new Matrix([
-        [1, 2, 3],
-        [4, 5, 6]
-    ]);
-    const matrixB = new Matrix([
-        [1.4, 2, 3],
-        [-1, 6, 3]
-    ]);
-    const matrixC = new Matrix([
-        [7, 8],
-        [9, 10],
-        [11, 12]
-    ]);
+    // const matrixA = new Matrix([
+    //     [1, 2, 3],
+    //     [4, 5, 6]
+    // ]);
+    // const matrixB = new Matrix([
+    //     [1.4, 2, 3],
+    //     [-1, 6, 3]
+    // ]);
+    // const matrixC = new Matrix([
+    //     [7, 8],
+    //     [9, 10],
+    //     [11, 12]
+    // ]);
 
     // log(matrixA);
     // log(matrixA.getRowVector(0));
     // log(matrixC.getColumnVector(0));
     // log(matrixC.getColumnVector(0));
-    log(matrixA.multiply(matrixC));
+    // log(matrixA.multiply(matrixC));
 
     // const vectorA = new Vector([-4, -9]);
     // const vectorB = new Vector([-1, 2]);
     // console.log(vectorA.dot(vectorB));
     // log(vectorA)
     // log(vectorB)
+
+    // const vectorA = new Vector3(2, 3, 4);
+    // const vectorB = new Vector3(5, 6, 7);
+    // log(vectorA.cross(vectorB));
+
+    // const identityMatrix = Matrix.identity(4);
+    // log(identityMatrix);
 });
