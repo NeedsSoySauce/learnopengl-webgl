@@ -13,20 +13,47 @@ class Matrix {
         }
     }
 
+    toString() {
+        const strVals = this.values.map((row) => row.map((value) => value.toFixed(1)));
+        const padding = Math.max(...strVals.flatMap((row) => row.map((value) => value.length)));
+        return strVals.map((row) => row.map((value) => value.padStart(padding)).join(' ')).join('\n');
+    }
+
     /**
+     * Multiply this matrix by a scalar or a another matrix. If a matrix is given, this matrix is treated as being on
+     * the left hand side. Returns a new matrix.
+     *
      * @param {(number|Matrix)} multiplier
+     * @returns {Matrix}
      */
     multiply(multiplier) {
         if (typeof multiplier === 'number') {
             return new Matrix(this.values.map((row) => row.map((value) => value * multiplier)));
         }
     }
+}
 
-    toString() {
-        const strVals = this.values.map((row) => row.map((value) => value.toFixed(1)));
-        const padding = Math.max(...strVals.flatMap((row) => row.map((value) => value.length)));
-        return strVals.map((row) => row.map((value) => value.padStart(padding)).join(' ')).join('\n');
+class Vector extends Matrix {
+    /**
+     * @param {number[]} values
+     */
+    constructor(values) {
+        super([values]);
+        this.length = values.length;
+    }
+
+    /**
+     * Returns the dot product of this vector and another vector.
+     *
+     * @param {Vector} vector
+     * @returns {number}
+     */
+    dot(vector) {
+        if (this.length !== vector.length) {
+            throw Error(`Cannot calculate the dot product of two vectors with a different length`);
+        }
+        return this.values[0].reduce((prev, curr, i) => prev + curr * vector.values[0][i], 0);
     }
 }
 
-export { Matrix };
+export { Matrix, Vector };

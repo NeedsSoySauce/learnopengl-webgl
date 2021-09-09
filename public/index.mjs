@@ -1,4 +1,4 @@
-import { Matrix } from './matrix.mjs';
+import { Matrix, Vector } from './matrix.mjs';
 import { ShaderUtil } from './util.mjs';
 import { RenderLoop } from './render.mjs';
 
@@ -137,13 +137,19 @@ const main = async () => {
 window.addEventListener('DOMContentLoaded', () => {
     // main().catch(console.error);
 
-    const a = new Matrix([
-        [1.4, 2, 3],
-        [-1, 6, 3]
-    ]);
-    console.log(a);
-    log(a);
+    // const a = new Matrix([
+    //     [1.4, 2, 3],
+    //     [-1, 6, 3]
+    // ]);
+    // console.log(a);
+    // log(a);
 
-    const b = a.multiply(2);
-    log(b);
+    // const b = a.multiply(2);
+    // log(b);
+
+    const vectorA = new Vector([-4, -9]);
+    const vectorB = new Vector([-1, 2]);
+    console.log(vectorA.dot(vectorB));
+    log(vectorA)
+    log(vectorB)
 });
