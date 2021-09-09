@@ -24,7 +24,7 @@ class Matrix {
      * @returns {Vector}
      */
     getRowVector(index) {
-        return new Vector([this.values[index]]);
+        return new Vector(this.values[index]);
     }
 
     /**
@@ -32,7 +32,7 @@ class Matrix {
      * @returns {Vector}
      */
     getColumnVector(index) {
-        return new Vector([this.values.map((row) => row[index])]);
+        return new Vector(this.values.map((row) => row[index]));
     }
 
     /**
@@ -42,10 +42,21 @@ class Matrix {
      * @param {(number|Matrix)} multiplier
      * @returns {Matrix}
      */
-    multiply(multiplier) {
-        if (typeof multiplier === 'number') {
-            return new Matrix(this.values.map((row) => row.map((value) => value * multiplier)));
+    multiply(other) {
+        if (typeof other === 'number') {
+            return new Matrix(this.values.map((row) => row.map((value) => value * other)));
         }
+
+        if (this.columns !== other.rows) {
+            throw Error(
+                `Cannot multiply a ${this.rows}x${this.columns} matrix by a ${other.rows}x${other.columns} matrix`
+            );
+        }
+
+        const range = new Array(this.rows).fill(0);
+        return new Matrix(
+            this.values.map((_, i) => range.map((_, j) => this.getRowVector(i).dot(other.getColumnVector(j))))
+        );
     }
 }
 
