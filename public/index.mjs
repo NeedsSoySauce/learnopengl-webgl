@@ -169,4 +169,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // const identityMatrix = Matrix.identity(4);
     // log(identityMatrix);
+
+    // const scalingMatrix = Matrix.scale(2, 3, 4);
+    // log(scalingMatrix);
+
+    const translationMatrix = Matrix.translate(2, 3, 4);
+    log(translationMatrix);
 });

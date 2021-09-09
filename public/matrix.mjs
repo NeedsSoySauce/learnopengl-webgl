@@ -69,6 +69,36 @@ class Matrix {
         const range = new Array(size).fill(0);
         return new Matrix(range.map((_, i) => new Array(size).fill(0).map((_, j) => (j === i ? 1 : 0))));
     }
+
+    /**
+     * Creates a scaling matrix using homogenous coordinates.
+     *
+     * @param {number} size
+     * @returns {Matrix}
+     */
+    static scale(x, y, z) {
+        return new Matrix([
+            [x, 0, 0, 0],
+            [0, y, 0, 0],
+            [0, 0, z, 0],
+            [0, 0, 0, 1]
+        ]);
+    }
+
+    /**
+     * Creates a translation matrix using homogenous coordinates.
+     *
+     * @param {number} size
+     * @returns {Matrix}
+     */
+    static translate(x, y, z) {
+        return new Matrix([
+            [1, 0, 0, x],
+            [0, 1, 0, y],
+            [0, 0, 1, z],
+            [0, 0, 0, 1]
+        ]);
+    }
 }
 
 class Vector extends Matrix {
