@@ -20,6 +20,22 @@ class Matrix {
     }
 
     /**
+     * @param {number} index
+     * @returns {Vector}
+     */
+    getRowVector(index) {
+        return new Vector([this.values[index]]);
+    }
+
+    /**
+     * @param {number} index
+     * @returns {Vector}
+     */
+    getColumnVector(index) {
+        return new Vector([this.values.map((row) => row[index])]);
+    }
+
+    /**
      * Multiply this matrix by a scalar or a another matrix. If a matrix is given, this matrix is treated as being on
      * the left hand side. Returns a new matrix.
      *
