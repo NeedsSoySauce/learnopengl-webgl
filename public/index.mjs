@@ -176,8 +176,9 @@ window.addEventListener('DOMContentLoaded', () => {
     // const translationMatrix = Matrix.translate(2, 3, 4);
     // log(translationMatrix);
 
-    const vector2 = new Vector2(2, 2);
-    const polar = vector2.polar();
+    const vector2 = new Vector2(123, -12);
+    const polar = vector2.toPolar();
     log(vector2);
     log(polar);
+    log(polar.toCartesian());
 });

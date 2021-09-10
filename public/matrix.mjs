@@ -151,8 +151,9 @@ class Vector2 extends Vector {
 
     /**
      * Returns this vector in polar coordinates.
+     * @returns {Polar}
      */
-    polar() {
+    toPolar() {
         const r = Math.sqrt(this.x ** 2 + this.y ** 2);
         const theta = Math.asin(this.y / r);
         return new Polar(r, theta);
@@ -172,6 +173,16 @@ class Polar {
     toString() {
         const degrees = MathUtils.radToDegrees(this.theta).toFixed(1);
         return `${this.r.toFixed(1)} ${degrees}°`;
+    }
+
+    /**
+     * Returns this object in cartesian coordinates.
+     * @returns {Vector2}
+     */
+    toCartesian() {
+        const x = Math.cos(this.theta) * this.r;
+        const y = Math.sin(this.theta) * this.r;
+        return new Vector2(x, y);
     }
 }
 
