@@ -1,3 +1,13 @@
+class MathUtils {
+    static radToDegrees(radians) {
+        return (radians / Math.PI) * 180;
+    }
+
+    static degreesToRadians(degrees) {
+        return (degrees / 180) * Math.PI;
+    }
+}
+
 class Matrix {
     /**
      * @param {number[][]} values
@@ -99,6 +109,10 @@ class Matrix {
             [0, 0, 0, 1]
         ]);
     }
+
+    static rotate() {
+        throw Error('I suck at math');
+    }
 }
 
 class Vector extends Matrix {
@@ -121,6 +135,43 @@ class Vector extends Matrix {
             throw Error(`Cannot calculate the dot product of two vectors with a different length`);
         }
         return this.values[0].reduce((prev, curr, i) => prev + curr * other.values[0][i], 0);
+    }
+}
+
+class Vector2 extends Vector {
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    constructor(x, y) {
+        super([x, y]);
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
+     * Returns this vector in polar coordinates.
+     */
+    polar() {
+        const r = Math.sqrt(this.x ** 2 + this.y ** 2);
+        const theta = Math.asin(this.y / r);
+        return new Polar(r, theta);
+    }
+}
+
+class Polar {
+    /**
+     * @param {number} r
+     * @param {number} theta
+     */
+    constructor(r, theta) {
+        this.r = r;
+        this.theta = theta;
+    }
+
+    toString() {
+        const degrees = MathUtils.radToDegrees(this.theta).toFixed(1);
+        return `${this.r.toFixed(1)} ${degrees}°`;
     }
 }
 
@@ -151,4 +202,4 @@ class Vector3 extends Vector {
     }
 }
 
-export { Matrix, Vector, Vector3 };
+export { Matrix, Vector, Vector2, Vector3 };

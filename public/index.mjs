@@ -1,4 +1,4 @@
-import { Matrix, Vector, Vector3 } from './matrix.mjs';
+import { Matrix, Vector, Vector2, Vector3 } from './matrix.mjs';
 import { ShaderUtil } from './util.mjs';
 import { RenderLoop } from './render.mjs';
 
@@ -15,11 +15,11 @@ const log = (obj) => console.log(obj.toString());
  * @param {string} path
  * @returns {Promise<string>}
  */
-const loadShader = async (path) => (await fetch(path)).text();
+const fetchText = async (path) => (await fetch(path)).text();
 
 const main = async () => {
-    const vertexShaderSource = await loadShader('./shaders/vertex.glsl');
-    const fragmentShaderSource = await loadShader('./shaders/fragment.glsl');
+    const vertexShaderSource = await fetchText('./shaders/vertex.glsl');
+    const fragmentShaderSource = await fetchText('./shaders/fragment.glsl');
 
     console.log(vertexShaderSource);
     console.log(fragmentShaderSource);
@@ -173,6 +173,11 @@ window.addEventListener('DOMContentLoaded', () => {
     // const scalingMatrix = Matrix.scale(2, 3, 4);
     // log(scalingMatrix);
 
-    const translationMatrix = Matrix.translate(2, 3, 4);
-    log(translationMatrix);
+    // const translationMatrix = Matrix.translate(2, 3, 4);
+    // log(translationMatrix);
+
+    const vector2 = new Vector2(2, 2);
+    const polar = vector2.polar();
+    log(vector2);
+    log(polar);
 });
