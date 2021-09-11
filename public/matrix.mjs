@@ -159,6 +159,17 @@ class Vector extends Matrix {
     }
 
     /**
+     * Multiply this vector by a scalar or another vector. If a vector is given, this vector is treated as being on
+     * the left hand side. Returns a new vector.
+     *
+     * @param {(number|Matrix)} multiplier
+     * @returns {Vector}
+     */
+    multiply(other) {
+        return new Vector(super.multiply(other).values[0]);
+    }
+
+    /**
      * @param {Vector} other
      */
     add(other) {
@@ -187,12 +198,51 @@ class Vector2 extends Vector {
         return new Polar(r, theta);
     }
 
-    /**
-     * @param {Vector2} other
-     */
+    multiply(other) {
+        const values = super.multiply(other).values[0];
+        return new Vector2(values[1], values[1]);
+    }
+
     add(other) {
-        const matrix = super.add(other);
-        return new Vector2(matrix.values[0][0], matrix.values[0][1]);
+        const values = super.add(other).values[0];
+        return new Vector2(values[0], values[1]);
+    }
+}
+
+class Vector3 extends Vector {
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+    constructor(x, y, z) {
+        super([x, y, z]);
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    /**
+     * Returns the cross product of this vector and another vector, treating this vector as being on the left hand side.
+     *
+     * @param {Vector3} other
+     * @returns {Vector3}
+     */
+    cross(other) {
+        const x = this.y * other.z - this.z * other.y;
+        const y = this.z * other.x - this.x * other.z;
+        const z = this.x * other.y - this.y * other.x;
+        return new Vector3(x, y, z);
+    }
+
+    multiply(other) {
+        const values = super.multiply(other).values[0];
+        return new Vector3(values[0], values[1], values[2]);
+    }
+
+    add(other) {
+        const values = super.add(other).values[0];
+        return new Vector3(values[0], values[1], values[2]);
     }
 }
 
@@ -244,40 +294,18 @@ class Quaternion {
         const v = this.v.add(other.v);
         return new Quaternion(s, v);
     }
-}
-
-class Vector3 extends Vector {
-    /**
-     * @param {number} x
-     * @param {number} y
-     * @param {number} z
-     */
-    constructor(x, y, z) {
-        super([x, y, z]);
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
 
     /**
-     * Returns the cross product of this vector and another vector, treating this vector as being on the left hand side.
-     *
-     * @param {Vector3} other
-     * @returns {Vector3}
+     * @param {(number|Quaternion)} other
+     * @returns {Quaternion}
      */
-    cross(other) {
-        const x = this.y * other.z - this.z * other.y;
-        const y = this.z * other.x - this.x * other.z;
-        const z = this.x * other.y - this.y * other.x;
-        return new Vector3(x, y, z);
-    }
-
-    /**
-     * @param {Vector2} other
-     */
-    add(other) {
-        const matrix = super.add(other);
-        return new Vector3(matrix.values[0][0], matrix.values[0][1], matrix.values[0][2]);
+    multiply(other) {
+        if (typeof other === 'number') {
+            return new Quaternion(this.s * other, this.v.multiply(other));
+        }
+        const s = this.s * other.s - this.v.dot(other.v);
+        const v = other.v.multiply(this.s).add(this.v.multiply(other.s)).add(this.v.cross(other.v));
+        return new Quaternion(s, v);
     }
 }
 
