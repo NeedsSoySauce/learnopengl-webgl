@@ -287,7 +287,7 @@ class Quaternion {
     }
 
     toString() {
-        return `${this.s.toFixed(1)} + ${this.v.x.toFixed(1)}i + ${this.v.y.toFixed(1)}j + ${this.v.z.toFixed(1)}k`;
+        return `${this.s.toFixed(2)} + ${this.v.x.toFixed(2)}i + ${this.v.y.toFixed(2)}j + ${this.v.z.toFixed(2)}k`;
     }
 
     /**
@@ -326,8 +326,16 @@ class Quaternion {
      *
      * @returns {Quaternion}
      */
-    normalize() {
+    normalized() {
         return this.multiply(1 / this.length);
+    }
+
+    conjugate() {
+        return new Quaternion(this.s, this.v.multiply(-1));
+    }
+
+    inverse() {
+        return this.conjugate().multiply(1 / this.length ** 2);
     }
 
     /**
