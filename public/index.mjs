@@ -182,8 +182,10 @@ window.addEventListener('DOMContentLoaded', () => {
     // log(polar);
     // log(polar.toCartesian());
 
-    const quaternionA = new Quaternion(1, new Vector3(2, 3, 4));
+    const quaternionA = new Quaternion(7, new Vector3(2, 3, 4));
     const quaternionB = new Quaternion(1, new Vector3(2, 3, 4));
-    log(quaternionA.add(quaternionB));
-    log(quaternionA.multiply(quaternionB));
+    // log(quaternionA.add(quaternionB));
+    // log(quaternionA.multiply(quaternionA));
+    log(quaternionB.norm());
+    log(quaternionB.length);
 });

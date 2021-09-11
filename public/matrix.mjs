@@ -282,6 +282,10 @@ class Quaternion {
         this.v = v;
     }
 
+    get length() {
+        return this.norm();
+    }
+
     toString() {
         return `${this.s} + ${this.v.x}i + ${this.v.y}j + ${this.v.z}k`;
     }
@@ -306,6 +310,21 @@ class Quaternion {
         const s = this.s * other.s - this.v.dot(other.v);
         const v = other.v.multiply(this.s).add(this.v.multiply(other.s)).add(this.v.cross(other.v));
         return new Quaternion(s, v);
+    }
+
+    norm() {
+        const components = [this.s, this.v.x, this.v.y, this.v.z];
+        return Math.sqrt(components.reduce((prev, curr) => prev + curr ** 2, 0));
+    }
+
+    /**
+     * Creates a pure quaternion (a quaternion with a scalar value of zero).
+     *
+     * @param {Vector3} v
+     * @returns {Quaternion}
+     */
+    static pure(v) {
+        return new Quaternion(0, v);
     }
 }
 
