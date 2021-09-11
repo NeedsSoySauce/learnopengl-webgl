@@ -188,4 +188,5 @@ window.addEventListener('DOMContentLoaded', () => {
     // log(quaternionA.multiply(quaternionA));
     log(quaternionB.norm());
     log(quaternionB.length);
+    log(quaternionB.normalised());
 });

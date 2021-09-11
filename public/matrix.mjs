@@ -287,7 +287,7 @@ class Quaternion {
     }
 
     toString() {
-        return `${this.s} + ${this.v.x}i + ${this.v.y}j + ${this.v.z}k`;
+        return `${this.s.toFixed(1)} + ${this.v.x.toFixed(1)}i + ${this.v.y.toFixed(1)}j + ${this.v.z.toFixed(1)}k`;
     }
 
     /**
@@ -315,6 +315,19 @@ class Quaternion {
     norm() {
         const components = [this.s, this.v.x, this.v.y, this.v.z];
         return Math.sqrt(components.reduce((prev, curr) => prev + curr ** 2, 0));
+    }
+
+    unitNorm() {
+        return this.normalised();
+    }
+
+    /**
+     * Returns a normalized copy of this quaternion.
+     *
+     * @returns {Quaternion}
+     */
+    normalize() {
+        return this.multiply(1 / this.length);
     }
 
     /**
