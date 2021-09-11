@@ -242,7 +242,6 @@ class Quaternion {
     add(other) {
         const s = this.s + other.s;
         const v = this.v.add(other.v);
-        console.log(v);
         return new Quaternion(s, v);
     }
 }
