@@ -1,4 +1,4 @@
-import { Matrix, Vector, Vector2, Vector3 } from './matrix.mjs';
+import { Matrix, Vector, Vector2, Vector3, Polar, Quaternion } from './matrix.mjs';
 import { ShaderUtil } from './util.mjs';
 import { RenderLoop } from './render.mjs';
 
@@ -176,9 +176,13 @@ window.addEventListener('DOMContentLoaded', () => {
     // const translationMatrix = Matrix.translate(2, 3, 4);
     // log(translationMatrix);
 
-    const vector2 = new Vector2(123, -12);
-    const polar = vector2.toPolar();
-    log(vector2);
-    log(polar);
-    log(polar.toCartesian());
+    // const vector2 = new Vector2(123, -12);
+    // const polar = vector2.toPolar();
+    // log(vector2);
+    // log(polar);
+    // log(polar.toCartesian());
+
+    const quaternionA = new Quaternion(123, new Vector3(1, 2, -3));
+    const quaternionB = new Quaternion(123, new Vector3(1, 2, -3));
+    log(quaternionA.add(quaternionB));
 });

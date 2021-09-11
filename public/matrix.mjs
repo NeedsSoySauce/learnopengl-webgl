@@ -70,6 +70,23 @@ class Matrix {
     }
 
     /**
+     * @param {(number|Matrix)} multiplier
+     * @returns {Matrix}
+     */
+    add(other) {
+        if (typeof other === 'number') {
+            return new Matrix(this.values.map((row) => row.map((value) => value + other)));
+        }
+
+        if (this.columns !== other.columns || this.rows !== other.rows) {
+            throw Error(`Cannot add a ${this.rows}x${this.columns} matrix to a ${other.rows}x${other.columns} matrix`);
+        }
+
+        const range = new Array(this.rows).fill(0);
+        return new Matrix(this.values.map((row, i) => other.values[i].map((value, j) => value + row[j])));
+    }
+
+    /**
      * Creates an identity matrix.
      *
      * @param {number} size
@@ -110,9 +127,13 @@ class Matrix {
         ]);
     }
 
-    static rotate() {
-        throw Error('I suck at math');
-    }
+    /**
+     * A poor attempt at rotating stuff.
+     *
+     * @param {number} degrees
+     * @param {('x'|'y'|'z')} axis
+     */
+    static axisRotation(degrees, axis) {}
 }
 
 class Vector extends Matrix {
@@ -136,6 +157,13 @@ class Vector extends Matrix {
         }
         return this.values[0].reduce((prev, curr, i) => prev + curr * other.values[0][i], 0);
     }
+
+    /**
+     * @param {Vector} other
+     */
+    add(other) {
+        return new Vector(super.add(other).values[0]);
+    }
 }
 
 class Vector2 extends Vector {
@@ -157,6 +185,14 @@ class Vector2 extends Vector {
         const r = Math.sqrt(this.x ** 2 + this.y ** 2);
         const theta = Math.asin(this.y / r);
         return new Polar(r, theta);
+    }
+
+    /**
+     * @param {Vector2} other
+     */
+    add(other) {
+        const matrix = super.add(other);
+        return new Vector2(matrix.values[0][0], matrix.values[0][1]);
     }
 }
 
@@ -186,6 +222,31 @@ class Polar {
     }
 }
 
+class Quaternion {
+    /**
+     * @param {number} s
+     * @param {Vector3} v
+     */
+    constructor(s, v) {
+        this.s = s;
+        this.v = v;
+    }
+
+    toString() {
+        return `${this.s} + ${this.v.x}i + ${this.v.y}j + ${this.v.z}k`;
+    }
+
+    /**
+     * @param {Quaternion} quaternion
+     */
+    add(other) {
+        const s = this.s + other.s;
+        const v = this.v.add(other.v);
+        console.log(v);
+        return new Quaternion(s, v);
+    }
+}
+
 class Vector3 extends Vector {
     /**
      * @param {number} x
@@ -211,6 +272,14 @@ class Vector3 extends Vector {
         const z = this.x * other.y - this.y * other.x;
         return new Vector3(x, y, z);
     }
+
+    /**
+     * @param {Vector2} other
+     */
+    add(other) {
+        const matrix = super.add(other);
+        return new Vector3(matrix.values[0][0], matrix.values[0][1], matrix.values[0][2]);
+    }
 }
 
-export { Matrix, Vector, Vector2, Vector3 };
+export { Matrix, Vector, Vector2, Vector3, Polar, Quaternion };
