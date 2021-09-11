@@ -244,6 +244,10 @@ class Vector3 extends Vector {
         const values = super.add(other).values[0];
         return new Vector3(values[0], values[1], values[2]);
     }
+
+    static get zero() {
+        return new Vector3(0, 0, 0);
+    }
 }
 
 class Polar {
@@ -339,13 +343,23 @@ class Quaternion {
     }
 
     /**
-     * Creates a pure quaternion (a quaternion with a scalar value of zero).
+     * Creates a pure quaternion (a quaternion with a scalar value of zero). This is also known as a vector quaternion.
      *
      * @param {Vector3} v
      * @returns {Quaternion}
      */
     static pure(v) {
         return new Quaternion(0, v);
+    }
+
+    /**
+     * Creates a scalar quaternion (a quaternion whose vector part is zero). This is also known as a real quaternion.
+     *
+     * @param {number} s
+     * @returns {Quaternion}
+     */
+    static scalar(s) {
+        return new Quaternion(s, Vector3.zero);
     }
 }
 
