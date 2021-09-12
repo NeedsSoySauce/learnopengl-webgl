@@ -1,6 +1,6 @@
-import { Matrix, Vector, Vector2, Vector3, Polar, Quaternion, MathUtils } from './matrix.mjs';
-import { ShaderUtil } from './util.mjs';
-import { RenderLoop } from './render.mjs';
+import { Matrix, Vector, Vector2, Vector3, Polar, Quaternion, MathUtils } from './matrix.js';
+import { ShaderUtil } from './util.js';
+import { RenderLoop } from './render.js';
 
 const canvas = document.querySelector('canvas');
 const objFileInput = document.querySelector('#object');
@@ -20,9 +20,6 @@ const fetchText = async (path) => (await fetch(path)).text();
 const main = async () => {
     const vertexShaderSource = await fetchText('./shaders/vertex.glsl');
     const fragmentShaderSource = await fetchText('./shaders/fragment.glsl');
-
-    console.log(vertexShaderSource);
-    console.log(fragmentShaderSource);
 
     // Initialize the GL context
     const gl = canvas.getContext('webgl2');
@@ -135,7 +132,7 @@ const main = async () => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-    // main().catch(console.error);
+    main().catch(console.error);
 
     // const matrixA = new Matrix([
     //     [1, 2, 3],
