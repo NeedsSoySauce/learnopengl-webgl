@@ -149,7 +149,21 @@ class Matrix {
      * @param {number} degrees
      * @param {Vector3} axis
      */
-    static axisRotation(degrees, axis) {}
+    static rotate(degrees, axis) {
+        const q = Quaternion.fromRotation(degrees, axis);
+        const q0 = q.s;
+        const q1 = q.v.x;
+        const q2 = q.v.y;
+        const q3 = q.v.z;
+
+        // See: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Rotation_matrices
+        return new Matrix([
+            [1 - 2 * (q2 ** 2 + q3 ** 2), 2 * (q1 * q2 - q0 * q3), 2 * (q0 * q2 + q1 * q3), 0],
+            [2 * (q1 * q2 + q0 * q3), 1 - 2 * (q1 ** 2 + q3 ** 3), 2 * (q2 * q3 - q0 * q1), 0],
+            [2 * (q1 * q3 - q0 * q2), 2 * (q0 * q1 + q2 * q3), 1 - 2(q1 ** 2 + q2 ** 2), 0],
+            [0, 0, 0, 1]
+        ]);
+    }
 }
 
 class Vector extends Matrix {
@@ -408,6 +422,8 @@ class Quaternion {
         const q1 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.x());
         const q2 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.y());
         const q3 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.z());
+
+        return new Quaternion(q0, new Vector3(q1, q2, q3));
     }
 }
 
