@@ -1,6 +1,8 @@
 import { Matrix, Vector, Vector2, Vector3, Polar, Quaternion, MathUtils } from './matrix.js';
+import { Scene, SceneObject } from './scene.js';
 import { ShaderUtil } from './util.js';
 import { RenderLoop } from './render.js';
+import { triangle } from './shape.js';
 
 const canvas = document.querySelector('canvas');
 const objFileInput = document.querySelector('#object');
@@ -59,18 +61,28 @@ const main = async () => {
     const vertexAttribPointerOffset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, vertexAttribPointerOffset);
 
-    // let vertexCoords = [-0.5, 0.5, 0.0, -0.5, -0.5, 0.9, 0.5, 0, 0];
-    let vertexCoords = [0.5, 0.5, 0, 0.7, 0.7, 0, 0.7, 0.5, 0];
-
-    let x = 0;
+    const scene = new Scene();
+    scene.addObject(new SceneObject(triangle()));
+    gl.uniformMatrix4fv(scaleAttributeLocation, false, Matrix.scale(1, 1.5, 1).flat);
 
     const renderFunction = (deltaTime) => {
-        ShaderUtil.clear(gl);
-        x += deltaTime;
-        gl.uniform1f(scaleAttributeLocation, 1 + Math.sin(x * 2) * 0.5);
-        let coords = vertexCoords.map((c) => c);
-        ShaderUtil.draw(gl, vertexCoords, size);
+        for (const sceneObject of scene.objects) {
+            ShaderUtil.draw(gl, sceneObject.vertices, size);
+        }
     };
+
+    // let vertexCoords = [-0.5, 0.5, 0.0, -0.5, -0.5, 0.9, 0.5, 0, 0];
+    // let vertexCoords = [0.5, 0.5, 0, 0.7, 0.7, 0, 0.7, 0.5, 0];
+
+    // let x = 0;
+
+    // const renderFunction = (deltaTime) => {
+    //     ShaderUtil.clear(gl);
+    //     x += deltaTime;
+    //     gl.uniform1f(scaleAttributeLocation, 1 + Math.sin(x * 2) * 0.5);
+    //     let coords = vertexCoords.map((c) => c);
+    //     ShaderUtil.draw(gl, vertexCoords, size);
+    // };
 
     // Render loop
     let isLooping = false;
@@ -193,6 +205,6 @@ window.addEventListener('DOMContentLoaded', () => {
     // const directionCosineA = MathUtils.directionCosine(axisOfRotation, axis);
     // console.log(directionCosineA);
 
-    const rotationMatrix = Matrix.rotate(45, Vector3.x());
-    log(rotationMatrix);
+    // const rotationMatrix = Matrix.rotate(45, Vector3.x);
+    // log(rotationMatrix);
 });

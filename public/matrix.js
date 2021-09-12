@@ -39,6 +39,13 @@ class Matrix {
         }
     }
 
+    /**
+     * @returns {number} the values in this matrix as a 1D array
+     */
+    get flat() {
+        return this.values.flatMap((row) => row);
+    }
+
     toString() {
         const strVals = this.values.map((row) => row.map((value) => value.toFixed(1)));
         const padding = Math.max(...strVals.flatMap((row) => row.map((value) => value.length)));
@@ -283,15 +290,19 @@ class Vector3 extends Vector {
         return new Vector3(0, 0, 0);
     }
 
-    static x() {
+    static get one() {
+        return new Vector3(1, 1, 1);
+    }
+
+    static get x() {
         return new Vector3(1, 0, 0);
     }
 
-    static y() {
+    static get y() {
         return new Vector3(0, 1, 0);
     }
 
-    static z() {
+    static get z() {
         return new Vector3(0, 0, 1);
     }
 }
@@ -419,9 +430,9 @@ class Quaternion {
         const halfRadians = radians / 2;
 
         const q0 = Math.cos(halfRadians);
-        const q1 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.x());
-        const q2 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.y());
-        const q3 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.z());
+        const q1 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.x);
+        const q2 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.y);
+        const q3 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.z);
 
         return new Quaternion(q0, new Vector3(q1, q2, q3));
     }

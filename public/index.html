@@ -1,27 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <script type="module" src="./index.js"></script>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <title>learnopengl</title>
+    <script type="module" src="./index.js"></script>
 
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body>
-        <div>
-            <button id="render-loop-toggle">Start</button>
-            <button id="reset">Reset</button>
+    <title>learnopengl</title>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div>
+        <button id="render-loop-toggle">Start</button>
+        <button id="reset">Reset</button>
+    </div>
+    <div id="performance">
+        <span>Delta time (ms)</span>
+        <span id="deltaTime"></span>
+    </div>
+
+    <canvas width="800" height="600"></canvas>
+
+    <div class="transform">
+        <div class="control-group">
+            <h4>Position</h4>
+            <label for="x-scale">x</label>
+            <input id="x-scale" type="number" min="0" max="2" value="1" step="0.1"></input>
+            <label for="y-scale">y</label>
+            <input id="y-scale" type="number" min="0" max="2" value="1" step="0.1"></input>
+            <label for="z-scale">z</label>
+            <input id="z-scale" type="number" min="0" max="2" value="1" step="0.1"></input>
         </div>
-        <div id="performance">
-            <span>Delta time (ms)</span>
-            <span id="deltaTime"></span>
+
+        <div class="control-group">
+            <h4>Scale</h4>
+            <label for="x-scale">x</label>
+            <input id="x-scale" type="number" min="0" max="2" value="1" step="0.1"></input>
+            <label for="y-scale">y</label>
+            <input id="y-scale" type="number" min="0" max="2" value="1" step="0.1"></input>
+            <label for="z-scale">z</label>
+            <input id="z-scale" type="number" min="0" max="2" value="1" step="0.1"></input>
         </div>
-        <canvas width="800" height="600"></canvas>
-        <label for="object">Select a file (.obj)</label>
-        <input type="file" id="object" name="avatar" accept=".obj" />
-        <pre></pre>
-    </body>
+
+        <div class="control-group">
+            <h4>Rotation</h4>
+            <label for="x-scale">x</label>
+            <input id="x-scale" type="number" value="0" step="10"></input>
+            <label for="y-scale">y</label>
+            <input id="y-scale" type="number" value="0" step="10"></input>
+            <label for="z-scale">z</label>
+            <input id="z-scale" type="number" value="0" step="10"></input>
+        </div>
+    </div>
+
+    <label for="object">Select a file (.obj)</label>
+    <input type="file" id="object" name="avatar" accept=".obj" />
+    <pre></pre>
+</body>
+
 </html>

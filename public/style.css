@@ -7,8 +7,27 @@ body {
     flex-direction: column;
 }
 
+h4 {
+    font-weight: bold;
+    margin: 0 0 8px 0;
+}
+
 canvas {
     width: 800px;
     height: 600px;
     border: 1px dashed lightgray;
+}
+
+.transform {
+    display: flex;
+}
+
+.transform .control-group {
+    margin: 0;
+    padding: 8px;
+    background-color: #d3d3d34a;
+}
+
+.transform .control-group input {
+    width: 72px;
 }
