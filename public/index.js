@@ -48,7 +48,9 @@ const main = async () => {
 
     // Setup attributes (these are used to tell WebGL how to interpret our data)
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
+    const uniformPositionAttributeLocation = gl.getUniformLocation(program, 'u_position');
     const scaleAttributeLocation = gl.getUniformLocation(program, 'u_scale');
+    const rotationAttributeLocation = gl.getUniformLocation(program, 'u_rotation');
     // const buffer = ShaderUtil.createArrayBuffer(gl, );
 
     // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -63,9 +65,22 @@ const main = async () => {
 
     const scene = new Scene();
     scene.addObject(new SceneObject(triangle()));
-    gl.uniformMatrix4fv(scaleAttributeLocation, false, Matrix.scale(1, 1.5, 1).flat);
+
+    const transform = {
+        position: Vector3.zero,
+        scale: Vector3.one,
+        rotation: Vector3.zero
+    };
+    const { position, scale, rotation } = transform;
 
     const renderFunction = (deltaTime) => {
+        gl.uniformMatrix4fv(
+            uniformPositionAttributeLocation,
+            true,
+            Matrix.translate(position.x, position.y, position.z).flat
+        );
+        gl.uniformMatrix4fv(scaleAttributeLocation, true, Matrix.scale(scale.x, scale.y, scale.z).flat);
+        gl.uniformMatrix4fv(rotationAttributeLocation, true, Matrix.rotate(0, Vector3.z).flat);
         for (const sceneObject of scene.objects) {
             ShaderUtil.draw(gl, sceneObject.vertices, size);
         }
@@ -139,6 +154,20 @@ const main = async () => {
             ShaderUtil.draw(gl, vertices, size);
         });
     });
+
+    const bindTransformControls = (x, y, z, group) => {
+        const vector = transform[group];
+        x.addEventListener('change', (e) => (vector.x = Number(e.target.value)));
+        y.addEventListener('change', (e) => (vector.y = Number(e.target.value)));
+        z.addEventListener('change', (e) => (vector.z = Number(e.target.value)));
+    };
+
+    for (const group of ['position', 'scale', 'rotation']) {
+        const xControl = document.querySelector(`#x-${group}`);
+        const yControl = document.querySelector(`#y-${group}`);
+        const zControl = document.querySelector(`#z-${group}`);
+        bindTransformControls(xControl, yControl, zControl, group);
+    }
 
     renderLoopToggleHtmlButtonElement.click();
 };

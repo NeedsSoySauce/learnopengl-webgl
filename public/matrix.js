@@ -86,7 +86,7 @@ class Matrix {
             );
         }
 
-        const range = new Array(this.rows).fill(0);
+        const range = new Array(other.columns).fill(0);
         return new Matrix(
             this.values.map((_, i) => range.map((_, j) => this.getRowVector(i).dot(other.getColumnVector(j))))
         );
@@ -225,8 +225,22 @@ class Vector2 extends Vector {
      */
     constructor(x, y) {
         super([x, y]);
-        this.x = x;
-        this.y = y;
+    }
+
+    get x() {
+        return this.values[0][0];
+    }
+
+    set x(value) {
+        this.values[0][0] = value;
+    }
+
+    get y() {
+        return this.values[0][1];
+    }
+
+    set y(value) {
+        this.values[0][1] = value;
     }
 
     /**
@@ -258,9 +272,30 @@ class Vector3 extends Vector {
      */
     constructor(x, y, z) {
         super([x, y, z]);
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    }
+
+    get x() {
+        return this.values[0][0];
+    }
+
+    set x(value) {
+        this.values[0][0] = value;
+    }
+
+    get y() {
+        return this.values[0][1];
+    }
+
+    set y(value) {
+        this.values[0][1] = value;
+    }
+
+    get z() {
+        return this.values[0][2];
+    }
+
+    set z(value) {
+        this.values[0][2] = value;
     }
 
     /**
