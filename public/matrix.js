@@ -144,7 +144,7 @@ class Matrix {
     }
 
     /**
-     * A poor attempt at rotating stuff.
+     * Creates a rotation matrix using homogenous coordinates.
      *
      * @param {number} degrees
      * @param {Vector3} axis
