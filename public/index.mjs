@@ -1,4 +1,4 @@
-import { Matrix, Vector, Vector2, Vector3, Polar, Quaternion } from './matrix.mjs';
+import { Matrix, Vector, Vector2, Vector3, Polar, Quaternion, MathUtils } from './matrix.mjs';
 import { ShaderUtil } from './util.mjs';
 import { RenderLoop } from './render.mjs';
 
@@ -182,12 +182,17 @@ window.addEventListener('DOMContentLoaded', () => {
     // log(polar);
     // log(polar.toCartesian());
 
-    const quaternionA = new Quaternion(7, new Vector3(2, 3, 4));
-    const quaternionB = new Quaternion(1, new Vector3(2, 3, 4));
+    // const quaternionA = new Quaternion(7, new Vector3(2, 3, 4));
+    // const quaternionB = new Quaternion(1, new Vector3(2, 3, 4));
     // log(quaternionA.add(quaternionB));
     // log(quaternionA.multiply(quaternionA));
-    log(quaternionB.norm());
-    log(quaternionB.length);
-    log(quaternionB.normalized());
-    log(quaternionB.inverse());
+    // log(quaternionB.norm());
+    // log(quaternionB.length);
+    // log(quaternionB.normalized());
+    // log(quaternionB.inverse());
+
+    const axisOfRotation = new Vector3(1, 1, 0);
+    const axis = Vector3.x();
+    const directionCosineA = MathUtils.directionCosine(axisOfRotation, axis);
+    console.log(directionCosineA);
 });

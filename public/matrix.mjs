@@ -6,6 +6,22 @@ class MathUtils {
     static degreesToRadians(degrees) {
         return (degrees / 180) * Math.PI;
     }
+
+    /**
+     *
+     * @param {Vector3} axisOfRotation
+     * @param {Vector3} axis
+     */
+    static directionCosine(axisOfRotation, axis) {
+        return axisOfRotation.dot(axis) / axisOfRotation.length;
+    }
+
+    /**
+     * @param {Array<number>} array
+     */
+    static sum(array) {
+        return array.reduce((prev, curr) => prev + curr, 0);
+    }
 }
 
 class Matrix {
@@ -131,7 +147,7 @@ class Matrix {
      * A poor attempt at rotating stuff.
      *
      * @param {number} degrees
-     * @param {('x'|'y'|'z')} axis
+     * @param {Vector3} axis
      */
     static axisRotation(degrees, axis) {}
 }
@@ -142,7 +158,11 @@ class Vector extends Matrix {
      */
     constructor(values) {
         super([values]);
-        this.length = values.length;
+        this._length = values.length;
+    }
+
+    get length() {
+        return Math.sqrt(MathUtils.sum(this.values[0].map((value) => value ** 2)));
     }
 
     /**
@@ -152,7 +172,7 @@ class Vector extends Matrix {
      * @returns {number}
      */
     dot(other) {
-        if (this.length !== other.length) {
+        if (this._length !== other._length) {
             throw Error(`Cannot calculate the dot product of two vectors with a different length`);
         }
         return this.values[0].reduce((prev, curr, i) => prev + curr * other.values[0][i], 0);
@@ -247,6 +267,18 @@ class Vector3 extends Vector {
 
     static get zero() {
         return new Vector3(0, 0, 0);
+    }
+
+    static x() {
+        return new Vector3(1, 0, 0);
+    }
+
+    static y() {
+        return new Vector3(0, 1, 0);
+    }
+
+    static z() {
+        return new Vector3(0, 0, 1);
     }
 }
 
@@ -361,6 +393,22 @@ class Quaternion {
     static scalar(s) {
         return new Quaternion(s, Vector3.zero);
     }
+
+    /**
+     * Creates a quaternion from an axis and rotation.
+     *
+     * @param {number} degrees
+     * @param {Vector3} axis
+     */
+    static fromRotation(degrees, axis) {
+        const radians = MathUtils.degreesToRadians(degrees);
+        const halfRadians = radians / 2;
+
+        const q0 = Math.cos(halfRadians);
+        const q1 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.x());
+        const q2 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.y());
+        const q3 = Math.sin(halfRadians) * MathUtils.directionCosine(axis, Vector3.z());
+    }
 }
 
-export { Matrix, Vector, Vector2, Vector3, Polar, Quaternion };
+export { Matrix, Vector, Vector2, Vector3, Polar, Quaternion, MathUtils };
