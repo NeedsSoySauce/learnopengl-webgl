@@ -191,8 +191,11 @@ window.addEventListener('DOMContentLoaded', () => {
     // log(quaternionB.normalized());
     // log(quaternionB.inverse());
 
-    const axisOfRotation = new Vector3(1, 1, 0);
-    const axis = Vector3.x();
-    const directionCosineA = MathUtils.directionCosine(axisOfRotation, axis);
-    console.log(directionCosineA);
+    // const axisOfRotation = new Vector3(1, 1, 0);
+    // const axis = Vector3.x();
+    // const directionCosineA = MathUtils.directionCosine(axisOfRotation, axis);
+    // console.log(directionCosineA);
+
+    const rotationMatrix = Matrix.rotate(45, Vector3.x());
+    log(rotationMatrix);
 });
