@@ -1,8 +1,8 @@
-import { Matrix, Vector, Vector2, Vector3, Polar, Quaternion, MathUtils } from './matrix.js';
+import { Matrix, Vector3, Vector4 } from './math.js';
 import { Scene, SceneObject } from './scene.js';
-import { ShaderUtil } from './util.js';
+import { ShaderUtils } from './shader.js';
 import { RenderLoop } from './render.js';
-import { triangle } from './shape.js';
+import { pyramid, triangle } from './shape.js';
 
 const canvas = document.querySelector('canvas');
 const objFileInput = document.querySelector('#object');
@@ -27,15 +27,15 @@ const main = async () => {
     const gl = canvas.getContext('webgl2');
 
     // Only continue if WebGL is available and working
-    if (!ShaderUtil.isWebGLAvailable(gl)) {
+    if (!ShaderUtils.isWebGLAvailable(gl)) {
         alert('Unable to initialize WebGL. Your browser or machine may not support it.');
         return;
     }
 
     // Setup shaders
-    const vertexShader = ShaderUtil.createVertexShader(gl, vertexShaderSource);
-    const fragmentShader = ShaderUtil.createFragmentShader(gl, fragmentShaderSource);
-    const program = ShaderUtil.createProgram(gl, vertexShader, fragmentShader);
+    const vertexShader = ShaderUtils.createVertexShader(gl, vertexShaderSource);
+    const fragmentShader = ShaderUtils.createFragmentShader(gl, fragmentShaderSource);
+    const program = ShaderUtils.createProgram(gl, vertexShader, fragmentShader);
 
     const size = 3;
 
@@ -44,7 +44,7 @@ const main = async () => {
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
 
-    const buffer = ShaderUtil.createArrayBuffer(gl);
+    const buffer = ShaderUtils.createArrayBuffer(gl);
 
     // Setup attributes (these are used to tell WebGL how to interpret our data)
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
@@ -53,7 +53,7 @@ const main = async () => {
     const xRotationAttributeLocation = gl.getUniformLocation(program, 'u_x_rotation');
     const yRotationAttributeLocation = gl.getUniformLocation(program, 'u_y_rotation');
     const zRotationAttributeLocation = gl.getUniformLocation(program, 'u_z_rotation');
-    // const buffer = ShaderUtil.createArrayBuffer(gl, );
+    // const buffer = ShaderUtils.createArrayBuffer(gl, );
 
     // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.enableVertexAttribArray(positionAttributeLocation);
@@ -76,17 +76,19 @@ const main = async () => {
     const { position, scale, rotation } = transform;
 
     const renderFunction = (deltaTime) => {
+        log(Matrix.rotate(rotation.y, Vector3.y));
         gl.uniformMatrix4fv(
             translationAttributeLocation,
-            true,
-            Matrix.translate(position.x, position.y, position.z).flat
+            false,
+            Matrix.translate(position.x, position.y, position.z).toArray()
         );
-        gl.uniformMatrix4fv(scaleAttributeLocation, true, Matrix.scale(scale.x, scale.y, scale.z).flat);
-        gl.uniformMatrix4fv(xRotationAttributeLocation, true, Matrix.rotate(rotation.x, Vector3.x).flat);
-        gl.uniformMatrix4fv(yRotationAttributeLocation, true, Matrix.rotate(rotation.y, Vector3.y).flat);
-        gl.uniformMatrix4fv(zRotationAttributeLocation, true, Matrix.rotate(rotation.z, Vector3.z).flat);
+        gl.uniformMatrix4fv(scaleAttributeLocation, false, Matrix.scale(scale.x, scale.y, scale.z).toArray());
+        gl.uniformMatrix4fv(xRotationAttributeLocation, false, Matrix.rotate(rotation.x, Vector3.x).toArray());
+        gl.uniformMatrix4fv(yRotationAttributeLocation, false, Matrix.rotate(rotation.y, Vector3.y).toArray());
+        gl.uniformMatrix4fv(zRotationAttributeLocation, false, Matrix.rotate(rotation.z, Vector3.z).toArray());
+
         for (const sceneObject of scene.objects) {
-            ShaderUtil.draw(gl, sceneObject.vertices, size);
+            ShaderUtils.draw(gl, sceneObject.vertices, size);
         }
     };
 
@@ -113,7 +115,7 @@ const main = async () => {
     });
 
     resetHtmlButtonElement.addEventListener('click', () => {
-        ShaderUtil.clear(gl);
+        ShaderUtils.clear(gl);
     });
 
     objFileInput.addEventListener('change', (e) => {
@@ -141,8 +143,8 @@ const main = async () => {
                 vertices = [...vertices, ...v];
             }
 
-            ShaderUtil.clear(gl);
-            ShaderUtil.draw(gl, vertices, size);
+            ShaderUtils.clear(gl);
+            ShaderUtils.draw(gl, vertices, size);
         });
     });
 
@@ -227,4 +229,21 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // const rotationMatrix = Matrix.rotate(45, Vector3.x);
     // log(rotationMatrix);
+
+    // const scalingMatrix = Matrix.scale(2, 3, 4);
+    // log(scalingMatrix);
+
+    // const vertex = new Vector4(1, 2, 3, 4);
+    // log(vertex);
+
+    // vertex.x = 2;
+    // vertex.y = 3;
+    // vertex.z = 4;
+    // vertex.w = 5;
+    // log(vertex);
+
+    // let result = scalingMatrix.multiply(vertex);
+    // log(result);
+
+    // log(scalingMatrix.toArray());
 });

@@ -8,4 +8,16 @@ const triangle = () => {
     return vertices.flatMap((vertex) => vertex);
 };
 
-export { triangle };
+const pyramid = () => {
+    // TODO convert to index buffer
+    const vertices = [
+        [+0.0, +0.5, +0.0],
+        [-0.5, -0.5, -0.5],
+        [-0.5, -0.5, +0.5],
+        [+0.5, -0.5, +0.5],
+        [+0.5, -0.5, -0.5]
+    ];
+    return vertices.flatMap((vertex) => vertex);
+};
+
+export { triangle, pyramid };

@@ -1,4 +1,4 @@
-import { Matrix, Vector3, Polar, Quaternion, MathUtils } from './matrix.js';
+import { Matrix, Vector3 } from './math.js';
 
 class Scene {
     constructor() {

@@ -1,5 +1,5 @@
 class MathUtils {
-    static radToDegrees(radians) {
+    static radiansToDegrees(radians) {
         return (radians / Math.PI) * 180;
     }
 
@@ -8,12 +8,11 @@ class MathUtils {
     }
 
     /**
-     *
      * @param {Vector3} axisOfRotation
-     * @param {Vector3} axis
+     * @param {Vector3} unitVector
      */
-    static directionCosine(axisOfRotation, axis) {
-        return axisOfRotation.dot(axis) / axisOfRotation.length;
+    static directionCosine(axisOfRotation, unitVector) {
+        return axisOfRotation.dot(unitVector) / axisOfRotation.length;
     }
 
     /**
@@ -39,17 +38,18 @@ class Matrix {
         }
     }
 
-    /**
-     * @returns {number} the values in this matrix as a 1D array
-     */
-    get flat() {
-        return this.values.flatMap((row) => row);
-    }
-
     toString() {
         const strVals = this.values.map((row) => row.map((value) => value.toFixed(1)));
         const padding = Math.max(...strVals.flatMap((row) => row.map((value) => value.length)));
         return strVals.map((row) => row.map((value) => value.padStart(padding)).join(' ')).join('\n');
+    }
+
+    /**
+     * @returns {number[]} the values in this matrix as a 1D array
+     */
+    toArray() {
+        const range = new Array(this.columns).fill(0);
+        return range.flatMap((_, i) => this.values.map((row) => row[i]));
     }
 
     /**
@@ -178,12 +178,12 @@ class Vector extends Matrix {
      * @param {number[]} values
      */
     constructor(values) {
-        super([values]);
+        super(values.map((value) => [value]));
         this._length = values.length;
     }
 
     get length() {
-        return Math.sqrt(MathUtils.sum(this.values[0].map((value) => value ** 2)));
+        return Math.sqrt(MathUtils.sum(this.values.map((row) => row[0] ** 2)));
     }
 
     /**
@@ -196,7 +196,7 @@ class Vector extends Matrix {
         if (this._length !== other._length) {
             throw Error(`Cannot calculate the dot product of two vectors with a different length`);
         }
-        return this.values[0].reduce((prev, curr, i) => prev + curr * other.values[0][i], 0);
+        return this.values.reduce((prev, curr, i) => prev + curr[0] * other.values[i][0], 0);
     }
 
     /**
@@ -236,11 +236,11 @@ class Vector2 extends Vector {
     }
 
     get y() {
-        return this.values[0][1];
+        return this.values[1][0];
     }
 
     set y(value) {
-        this.values[0][1] = value;
+        this.values[1][0] = value;
     }
 
     /**
@@ -253,11 +253,19 @@ class Vector2 extends Vector {
         return new Polar(r, theta);
     }
 
+    /**
+     * @param {(number|Vector2)} other
+     * @returns {Vector2}
+     */
     multiply(other) {
         const values = super.multiply(other).values[0];
         return new Vector2(values[1], values[1]);
     }
 
+    /**
+     * @param {(number|Vector2)} other
+     * @returns {Vector2}
+     */
     add(other) {
         const values = super.add(other).values[0];
         return new Vector2(values[0], values[1]);
@@ -283,19 +291,19 @@ class Vector3 extends Vector {
     }
 
     get y() {
-        return this.values[0][1];
+        return this.values[1][0];
     }
 
     set y(value) {
-        this.values[0][1] = value;
+        this.values[1][0] = value;
     }
 
     get z() {
-        return this.values[0][2];
+        return this.values[2][0];
     }
 
     set z(value) {
-        this.values[0][2] = value;
+        this.values[2][0] = value;
     }
 
     /**
@@ -311,11 +319,19 @@ class Vector3 extends Vector {
         return new Vector3(x, y, z);
     }
 
+    /**
+     * @param {(number|Vector3)} other
+     * @returns {Vector3}
+     */
     multiply(other) {
         const values = super.multiply(other).values[0];
         return new Vector3(values[0], values[1], values[2]);
     }
 
+    /**
+     * @param {(number|Vector3)} other
+     * @returns {Vector3}
+     */
     add(other) {
         const values = super.add(other).values[0];
         return new Vector3(values[0], values[1], values[2]);
@@ -342,6 +358,101 @@ class Vector3 extends Vector {
     }
 }
 
+class Vector4 extends Vector {
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     * @param {number} w
+     */
+    constructor(x, y, z, w) {
+        super([x, y, z, w]);
+    }
+
+    get x() {
+        return this.values[0][0];
+    }
+
+    set x(value) {
+        this.values[0][0] = value;
+    }
+
+    get y() {
+        return this.values[1][0];
+    }
+
+    set y(value) {
+        this.values[1][0] = value;
+    }
+
+    get z() {
+        return this.values[2][0];
+    }
+
+    set z(value) {
+        this.values[2][0] = value;
+    }
+
+    get w() {
+        return this.values[3][0];
+    }
+
+    set w(value) {
+        this.values[3][0] = value;
+    }
+
+    /**
+     * Returns the cross product of this vector and another vector, treating this vector as being on the left hand side.
+     *
+     * @param {Vector4} other
+     * @returns {Vector4}
+     */
+    cross(other) {
+        const x = this.y * other.z - this.z * other.y;
+        const y = this.z * other.x - this.x * other.z;
+        const z = this.x * other.y - this.y * other.x;
+        return new Vector4(x, y, z);
+    }
+
+    /**
+     * @param {(number|Vector4)} other
+     * @returns {Vector4}
+     */
+    multiply(other) {
+        const values = super.multiply(other).values[0];
+        return new Vector4(values[0], values[1], values[2]);
+    }
+
+    /**
+     * @param {(number|Vector4)} other
+     * @returns {Vector4}
+     */
+    add(other) {
+        const values = super.add(other).values[0];
+        return new Vector4(values[0], values[1], values[2]);
+    }
+
+    static get zero() {
+        return new Vector4(0, 0, 0);
+    }
+
+    static get one() {
+        return new Vector4(1, 1, 1);
+    }
+
+    static get x() {
+        return new Vector4(1, 0, 0);
+    }
+
+    static get y() {
+        return new Vector4(0, 1, 0);
+    }
+
+    static get z() {
+        return new Vector4(0, 0, 1);
+    }
+}
+
 class Polar {
     /**
      * @param {number} r
@@ -353,7 +464,7 @@ class Polar {
     }
 
     toString() {
-        const degrees = MathUtils.radToDegrees(this.theta).toFixed(1);
+        const degrees = MathUtils.radiansToDegrees(this.theta).toFixed(1);
         return `${this.r.toFixed(1)} ${degrees}°`;
     }
 
@@ -473,4 +584,4 @@ class Quaternion {
     }
 }
 
-export { Matrix, Vector, Vector2, Vector3, Polar, Quaternion, MathUtils };
+export { Matrix, Vector, Vector2, Vector3, Vector4, Polar, Quaternion, MathUtils };

@@ -1,11 +1,11 @@
-class ShaderUtil {
+class ShaderUtils {
     /**
      * @param {HTMLCanvasElement} element
      */
     constructor(element) {
         this.gl = element.getContext('webgl2');
 
-        if (!ShaderUtil.isWebGLAvailable(this.gl)) {
+        if (!ShaderUtils.isWebGLAvailable(this.gl)) {
             throw new Error('Unable to initialize WebGL. Your browser or machine may not support it.');
         }
     }
@@ -39,7 +39,7 @@ class ShaderUtil {
      * @param {string} source
      */
     static createVertexShader(gl, source) {
-        return ShaderUtil.createShader(gl, gl.VERTEX_SHADER, source);
+        return ShaderUtils.createShader(gl, gl.VERTEX_SHADER, source);
     }
 
     /**
@@ -47,7 +47,7 @@ class ShaderUtil {
      * @param {string} source
      */
     static createFragmentShader(gl, source) {
-        return ShaderUtil.createShader(gl, gl.FRAGMENT_SHADER, source);
+        return ShaderUtils.createShader(gl, gl.FRAGMENT_SHADER, source);
     }
 
     /**
@@ -98,14 +98,14 @@ class ShaderUtil {
      * @param {WebGL2RenderingContext} gl
      * @param {number[]} vertexCoords
      * @param {number} size
+     * @param {GLenum} mode
      */
-    static draw(gl, vertexCoords, size) {
+    static draw(gl, vertexCoords, size, mode = WebGL2RenderingContext.LINE_LOOP) {
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexCoords), gl.STATIC_DRAW);
-        const primitiveType = gl.LINE_LOOP;
         const drawArraysOffset = 0;
         const count = vertexCoords.length / size;
-        gl.drawArrays(primitiveType, drawArraysOffset, count);
+        gl.drawArrays(mode, drawArraysOffset, count);
     }
 }
 
-export { ShaderUtil };
+export { ShaderUtils };
