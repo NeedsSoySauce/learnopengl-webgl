@@ -76,7 +76,6 @@ const main = async () => {
     const { position, scale, rotation } = transform;
 
     const renderFunction = (deltaTime) => {
-        log(Matrix.rotate(rotation.y, Vector3.y));
         gl.uniformMatrix4fv(
             translationAttributeLocation,
             false,
