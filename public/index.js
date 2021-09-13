@@ -48,9 +48,11 @@ const main = async () => {
 
     // Setup attributes (these are used to tell WebGL how to interpret our data)
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-    const uniformPositionAttributeLocation = gl.getUniformLocation(program, 'u_position');
+    const translationAttributeLocation = gl.getUniformLocation(program, 'u_translation');
     const scaleAttributeLocation = gl.getUniformLocation(program, 'u_scale');
-    const rotationAttributeLocation = gl.getUniformLocation(program, 'u_rotation');
+    const xRotationAttributeLocation = gl.getUniformLocation(program, 'u_x_rotation');
+    const yRotationAttributeLocation = gl.getUniformLocation(program, 'u_y_rotation');
+    const zRotationAttributeLocation = gl.getUniformLocation(program, 'u_z_rotation');
     // const buffer = ShaderUtil.createArrayBuffer(gl, );
 
     // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -75,29 +77,18 @@ const main = async () => {
 
     const renderFunction = (deltaTime) => {
         gl.uniformMatrix4fv(
-            uniformPositionAttributeLocation,
+            translationAttributeLocation,
             true,
             Matrix.translate(position.x, position.y, position.z).flat
         );
         gl.uniformMatrix4fv(scaleAttributeLocation, true, Matrix.scale(scale.x, scale.y, scale.z).flat);
-        gl.uniformMatrix4fv(rotationAttributeLocation, true, Matrix.rotate(0, Vector3.z).flat);
+        gl.uniformMatrix4fv(xRotationAttributeLocation, true, Matrix.rotate(rotation.x, Vector3.x).flat);
+        gl.uniformMatrix4fv(yRotationAttributeLocation, true, Matrix.rotate(rotation.y, Vector3.y).flat);
+        gl.uniformMatrix4fv(zRotationAttributeLocation, true, Matrix.rotate(rotation.z, Vector3.z).flat);
         for (const sceneObject of scene.objects) {
             ShaderUtil.draw(gl, sceneObject.vertices, size);
         }
     };
-
-    // let vertexCoords = [-0.5, 0.5, 0.0, -0.5, -0.5, 0.9, 0.5, 0, 0];
-    // let vertexCoords = [0.5, 0.5, 0, 0.7, 0.7, 0, 0.7, 0.5, 0];
-
-    // let x = 0;
-
-    // const renderFunction = (deltaTime) => {
-    //     ShaderUtil.clear(gl);
-    //     x += deltaTime;
-    //     gl.uniform1f(scaleAttributeLocation, 1 + Math.sin(x * 2) * 0.5);
-    //     let coords = vertexCoords.map((c) => c);
-    //     ShaderUtil.draw(gl, vertexCoords, size);
-    // };
 
     // Render loop
     let isLooping = false;
