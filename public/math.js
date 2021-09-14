@@ -16,7 +16,7 @@ class MathUtils {
     }
 
     /**
-     * @param {Array<number>} array
+     * @param {number[]} array
      */
     static sum(array) {
         return array.reduce((prev, curr) => prev + curr, 0);
@@ -25,7 +25,7 @@ class MathUtils {
     /**
      * Multiples 2 or more matrices in the order given.
      *
-     * @param {Array<Matrix>} matrices
+     * @param {Matrix[]} matrices
      */
     static multiplyMatrices(matrices) {
         if (matrices.length < 2) throw Error('Multiplication requires at least two matrices');

@@ -88,6 +88,21 @@ class ShaderUtils {
 
     /**
      * @param {WebGL2RenderingContext} gl
+     * @param {number[]} data Initial data to buffer or `null` to not buffer anything.
+     * @param {number} usage Defaults to STATIC_DRAW.
+     * @param {boolean} unbind Defaults to false. Whether to unbind the new buffer before returning.
+     * @returns {WebGLBuffer}
+     */
+    static createIndexBuffer(gl, data = null, usage = WebGL2RenderingContext.STATIC_DRAW, unbind = false) {
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+        if (data) gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), usage);
+        if (unbind) gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        return buffer;
+    }
+
+    /**
+     * @param {WebGL2RenderingContext} gl
      */
     static clear(gl) {
         gl.clearColor(0, 0, 0, 0);
@@ -96,15 +111,25 @@ class ShaderUtils {
 
     /**
      * @param {WebGL2RenderingContext} gl
-     * @param {number[]} vertexCoords
+     * @param {number[]} vertices
+     * @param {number[]} indices
      * @param {number} size
-     * @param {GLenum} mode
+     * @param {GLenum} mode Defaults to LINE_LOOP
+     * @param {GLenum} usage Defaults to STATIC_DRAW
      */
-    static draw(gl, vertexCoords, size, mode = WebGL2RenderingContext.LINE_LOOP) {
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexCoords), gl.STATIC_DRAW);
-        const drawArraysOffset = 0;
-        const count = vertexCoords.length / size;
-        gl.drawArrays(mode, drawArraysOffset, count);
+    static draw(
+        gl,
+        vertices,
+        indices,
+        mode = WebGL2RenderingContext.LINE_LOOP,
+        usage = WebGL2RenderingContext.STATIC_DRAW
+    ) {
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), usage);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), usage);
+        const count = indices.length;
+        const offset = 0;
+        const type = gl.UNSIGNED_SHORT;
+        gl.drawElements(mode, count, type, offset);
     }
 }
 

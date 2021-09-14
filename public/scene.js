@@ -20,10 +20,14 @@ class Scene {
 
 class SceneObject {
     /**
-     * @param {Array<Number>} vertices
+     * @param {number[]} vertices
+     * @param {number[]} indices
+     * @param {number} drawMode
      */
-    constructor(vertices) {
+    constructor(vertices, indices, drawMode) {
         this.vertices = vertices;
+        this.indices = indices;
+        this.drawMode = drawMode;
         this.position = Vector3.zero;
         this.scale = Vector3.one;
         this.rotation = Vector3.zero;

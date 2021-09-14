@@ -2,7 +2,7 @@ import { Matrix, Vector, Vector3, Vector4 } from './math.js';
 import { Scene, SceneObject } from './scene.js';
 import { ShaderUtils } from './shader.js';
 import { RenderLoop } from './render.js';
-import { pyramid, triangle } from './shape.js';
+import { cube, pyramid, triangle } from './shape.js';
 
 const canvas = document.querySelector('canvas');
 const objFileInput = document.querySelector('#object');
@@ -44,7 +44,8 @@ const main = async () => {
     const vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
 
-    const buffer = ShaderUtils.createArrayBuffer(gl);
+    const arrayBuffer = ShaderUtils.createArrayBuffer(gl);
+    const indexBuffer = ShaderUtils.createIndexBuffer(gl);
 
     // Setup attributes (these are used to tell WebGL how to interpret our data)
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
@@ -59,8 +60,9 @@ const main = async () => {
     const vertexAttribPointerOffset = 0; // start at the beginning of the buffer
     gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, vertexAttribPointerOffset);
 
+    const shape = cube();
     const scene = new Scene();
-    const sceneObject = new SceneObject(triangle());
+    const sceneObject = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
     scene.addObject(sceneObject);
 
     const transform = {
@@ -79,7 +81,7 @@ const main = async () => {
         gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
 
         for (const sceneObject of scene.objects) {
-            ShaderUtils.draw(gl, sceneObject.vertices, size);
+            ShaderUtils.draw(gl, sceneObject.vertices, sceneObject.indices, sceneObject.drawMode);
         }
     };
 
