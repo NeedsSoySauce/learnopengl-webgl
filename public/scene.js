@@ -54,10 +54,26 @@ class SceneObject {
     }
 
     /**
+     * @param {Vector3} position
+     */
+    setPosition(position) {
+        this.position = position;
+        this._updateModelMatrix();
+    }
+
+    /**
      * @param {Vector3} scale
      */
     setScale(scale) {
         this.scale = scale;
+        this._updateModelMatrix();
+    }
+
+    /**
+     * @param {Vector3} rotation
+     */
+    setRotation(rotation) {
+        this.rotation = rotation;
         this._updateModelMatrix();
     }
 }
