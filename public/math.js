@@ -21,6 +21,16 @@ class MathUtils {
     static sum(array) {
         return array.reduce((prev, curr) => prev + curr, 0);
     }
+
+    /**
+     * Multiples 2 or more matrices in the order given.
+     *
+     * @param {Array<Matrix>} matrices
+     */
+    static multiplyMatrices(matrices) {
+        if (matrices.length < 2) throw Error('Multiplication requires at least two matrices');
+        return matrices.slice(1).reduce((prev, curr) => prev.multiply(curr), matrices[0]);
+    }
 }
 
 class Matrix {
@@ -207,7 +217,8 @@ class Vector extends Matrix {
      * @returns {Vector}
      */
     multiply(other) {
-        return new Vector(super.multiply(other).values[0]);
+        const values = super.multiply(other).values;
+        return new Vector(values.map((row) => row[0]));
     }
 
     /**
@@ -258,8 +269,8 @@ class Vector2 extends Vector {
      * @returns {Vector2}
      */
     multiply(other) {
-        const values = super.multiply(other).values[0];
-        return new Vector2(values[1], values[1]);
+        const values = super.multiply(other).values;
+        return new Vector2(values[0][1], values[1][0]);
     }
 
     /**
@@ -324,7 +335,7 @@ class Vector3 extends Vector {
      * @returns {Vector3}
      */
     multiply(other) {
-        const values = super.multiply(other).values[0];
+        const values = super.multiply(other).values;
         return new Vector3(values[0], values[1], values[2]);
     }
 
@@ -334,7 +345,7 @@ class Vector3 extends Vector {
      */
     add(other) {
         const values = super.add(other).values[0];
-        return new Vector3(values[0], values[1], values[2]);
+        return new Vector3(values[0][0], values[1][0], values[2][0]);
     }
 
     static get zero() {

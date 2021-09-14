@@ -1,4 +1,4 @@
-import { Matrix, Vector3 } from './math.js';
+import { MathUtils, Matrix, Vector3 } from './math.js';
 
 class Scene {
     constructor() {
@@ -24,10 +24,33 @@ class SceneObject {
      */
     constructor(vertices) {
         this.vertices = vertices;
-        this.position = Vector3.one;
+        this.position = Vector3.zero;
         this.scale = Vector3.one;
-        this.rotation = Vector3.one;
-        this.scaleMatrix = Matrix.scale(this.scale);
+        this.rotation = Vector3.zero;
+        this.translationMatrix = Matrix.identity(4);
+        this.scaleMatrix = Matrix.identity(4);
+        this.xRotationMatrix = Matrix.identity(4);
+        this.yRotationMatrix = Matrix.identity(4);
+        this.zRotationMatrix = Matrix.identity(4);
+        this.modelMatrix = Matrix.identity(4);
+        this.modelMatrixArray = this.modelMatrix.toArray();
+        this._updateModelMatrix();
+    }
+
+    _updateModelMatrix() {
+        this.translationMatrix = Matrix.translate(this.position.x, this.position.y, this.position.z);
+        this.scaleMatrix = Matrix.scale(this.scale.x, this.scale.y, this.scale.z);
+        this.xRotationMatrix = Matrix.rotate(this.rotation.x, Vector3.x);
+        this.yRotationMatrix = Matrix.rotate(this.rotation.y, Vector3.y);
+        this.zRotationMatrix = Matrix.rotate(this.rotation.z, Vector3.z);
+        this.modelMatrix = MathUtils.multiplyMatrices([
+            this.translationMatrix,
+            this.scaleMatrix,
+            this.xRotationMatrix,
+            this.yRotationMatrix,
+            this.zRotationMatrix
+        ]);
+        this.modelMatrixArray = this.modelMatrix.toArray();
     }
 
     /**
@@ -35,7 +58,7 @@ class SceneObject {
      */
     setScale(scale) {
         this.scale = scale;
-        this.scaleMatrix = Matrix.scale(this.scale);
+        this._updateModelMatrix();
     }
 }
 

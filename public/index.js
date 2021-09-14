@@ -1,4 +1,4 @@
-import { Matrix, Vector3, Vector4 } from './math.js';
+import { Matrix, Vector, Vector3, Vector4 } from './math.js';
 import { Scene, SceneObject } from './scene.js';
 import { ShaderUtils } from './shader.js';
 import { RenderLoop } from './render.js';
@@ -48,14 +48,8 @@ const main = async () => {
 
     // Setup attributes (these are used to tell WebGL how to interpret our data)
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
-    const translationAttributeLocation = gl.getUniformLocation(program, 'u_translation');
-    const scaleAttributeLocation = gl.getUniformLocation(program, 'u_scale');
-    const xRotationAttributeLocation = gl.getUniformLocation(program, 'u_x_rotation');
-    const yRotationAttributeLocation = gl.getUniformLocation(program, 'u_y_rotation');
-    const zRotationAttributeLocation = gl.getUniformLocation(program, 'u_z_rotation');
-    // const buffer = ShaderUtils.createArrayBuffer(gl, );
+    const modelMatrixAttributeLocation = gl.getUniformLocation(program, 'u_model');
 
-    // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.enableVertexAttribArray(positionAttributeLocation);
 
     // Tell WebGL how to read values for the above attribute from out input
@@ -66,7 +60,8 @@ const main = async () => {
     gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, vertexAttribPointerOffset);
 
     const scene = new Scene();
-    scene.addObject(new SceneObject(triangle()));
+    const sceneObject = new SceneObject(triangle());
+    scene.addObject(sceneObject);
 
     const transform = {
         position: Vector3.zero,
@@ -75,16 +70,11 @@ const main = async () => {
     };
     const { position, scale, rotation } = transform;
 
+    let x = 0;
     const renderFunction = (deltaTime) => {
-        gl.uniformMatrix4fv(
-            translationAttributeLocation,
-            false,
-            Matrix.translate(position.x, position.y, position.z).toArray()
-        );
-        gl.uniformMatrix4fv(scaleAttributeLocation, false, Matrix.scale(scale.x, scale.y, scale.z).toArray());
-        gl.uniformMatrix4fv(xRotationAttributeLocation, false, Matrix.rotate(rotation.x, Vector3.x).toArray());
-        gl.uniformMatrix4fv(yRotationAttributeLocation, false, Matrix.rotate(rotation.y, Vector3.y).toArray());
-        gl.uniformMatrix4fv(zRotationAttributeLocation, false, Matrix.rotate(rotation.z, Vector3.z).toArray());
+        x += deltaTime;
+        sceneObject.setScale(Vector3.one.multiply(1 + Math.sin(x * 3) / 4));
+        gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
 
         for (const sceneObject of scene.objects) {
             ShaderUtils.draw(gl, sceneObject.vertices, size);
@@ -165,7 +155,11 @@ const main = async () => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-    main().catch(console.error);
+    main().catch((e) => {
+        console.error(e);
+        pre.classList.add('error');
+        pre.textContent = `${e.stack ? e.stack : e}`;
+    });
 
     // const matrixA = new Matrix([
     //     [1, 2, 3],

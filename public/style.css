@@ -31,3 +31,7 @@ canvas {
 .transform .control-group input {
     width: 72px;
 }
+
+.error {
+    color: red;
+}
