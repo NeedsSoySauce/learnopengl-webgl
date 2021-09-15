@@ -77,7 +77,7 @@ const main = async () => {
         x += deltaTime;
         sceneObject.setPosition(Vector3.one.multiply(Math.sin(x * 3) / 4));
         sceneObject.setScale(Vector3.one.multiply(1 + Math.sin(x * 3) / 4));
-        sceneObject.setRotation(Vector3.one.multiply(Math.sin(x) * 360));
+        sceneObject.setRotation(Vector3.one.multiply((x * 10) % 360));
         gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
 
         for (const sceneObject of scene.objects) {
