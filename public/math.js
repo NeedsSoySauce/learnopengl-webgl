@@ -120,6 +120,13 @@ class Matrix {
     }
 
     /**
+     * @returns {Matrix}
+     */
+    inverse() {
+        throw Error('Not implemented!');
+    }
+
+    /**
      * Creates an identity matrix.
      *
      * @param {number} size
@@ -179,6 +186,27 @@ class Matrix {
             [2 * (q1 * q2 + q0 * q3), 1 - 2 * (q1 ** 2 + q3 ** 2), 2 * (q2 * q3 - q0 * q1), 0],
             [2 * (q1 * q3 - q0 * q2), 2 * (q0 * q1 + q2 * q3), 1 - 2 * (q1 ** 2 + q2 ** 2), 0],
             [0, 0, 0, 1]
+        ]);
+    }
+
+    /**
+     * Creates a projection matrix
+     * @param {*} fieldOfViewDegrees
+     * @param {*} aspectRatio
+     * @param {*} near
+     * @param {*} far
+     */
+    static perspective(fieldOfViewDegrees, aspectRatio, near, far) {
+        const f = 1 / Math.tan(MathUtils.degreesToRadians(fieldOfViewDegrees / 2));
+        const ar = aspectRatio;
+        const r = near - far;
+
+        // See: https://www.songho.ca/opengl/gl_projectionmatrix.html#perspective
+        return new Matrix([
+            [f / ar, 0, 0, 0],
+            [0, f, 0, 0],
+            [0, 0, (-near - far) / r, (2 * near * far) / r],
+            [0, 0, 1, 0]
         ]);
     }
 }

@@ -26,6 +26,8 @@ const main = async () => {
     // Initialize the GL context
     const gl = canvas.getContext('webgl2');
 
+    ShaderUtils.setCanvasSize(gl, 800, 600);
+
     // Only continue if WebGL is available and working
     if (!ShaderUtils.isWebGLAvailable(gl)) {
         alert('Unable to initialize WebGL. Your browser or machine may not support it.');
@@ -50,6 +52,8 @@ const main = async () => {
     // Setup attributes (these are used to tell WebGL how to interpret our data)
     const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
     const modelMatrixAttributeLocation = gl.getUniformLocation(program, 'u_model');
+    const viewMatrixAttributeLocation = gl.getUniformLocation(program, 'u_view');
+    const projectionMatrixAttributeLocation = gl.getUniformLocation(program, 'u_projection');
 
     gl.enableVertexAttribArray(positionAttributeLocation);
 
@@ -75,10 +79,16 @@ const main = async () => {
     let x = 0;
     const renderFunction = (deltaTime) => {
         x += deltaTime;
-        sceneObject.setPosition(Vector3.one.multiply(Math.sin(x * 3) / 4));
-        sceneObject.setScale(Vector3.one.multiply(1 + Math.sin(x * 3) / 4));
-        sceneObject.setRotation(Vector3.one.multiply((x * 10) % 360));
+        // sceneObject.setPosition(Vector3.one.multiply(Math.sin(x * 3) / 4));
+        // sceneObject.setScale(Vector3.one.multiply(1 + Math.sin(x * 3) / 4));
+        sceneObject.setRotation(new Vector3(0, (x * 10) % 360, 0));
         gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
+        gl.uniformMatrix4fv(viewMatrixAttributeLocation, false, Matrix.translate(0, 0, 2).toArray());
+        gl.uniformMatrix4fv(
+            projectionMatrixAttributeLocation,
+            false,
+            Matrix.perspective(90, gl.canvas.width / gl.canvas.height, 2.1, 2.6).toArray()
+        );
 
         for (const sceneObject of scene.objects) {
             ShaderUtils.draw(gl, sceneObject.vertices, sceneObject.indices, sceneObject.drawMode);

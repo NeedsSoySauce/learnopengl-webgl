@@ -131,6 +131,20 @@ class ShaderUtils {
         const type = gl.UNSIGNED_SHORT;
         gl.drawElements(mode, count, type, offset);
     }
+
+    /**
+     * @param {WebGL2RenderingContext} gl
+     * @param {number} width
+     * @param {number} height
+     */
+    static setCanvasSize(gl, width, height) {
+        const canvas = gl.canvas;
+        canvas.height = height;
+        canvas.width = width;
+        canvas.style.height = `${height}px`;
+        canvas.style.width = `${width}px`;
+        gl.viewport(0, 0, width, height);
+    }
 }
 
 export { ShaderUtils };
