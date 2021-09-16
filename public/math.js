@@ -115,15 +115,27 @@ class Matrix {
             throw Error(`Cannot add a ${this.rows}x${this.columns} matrix to a ${other.rows}x${other.columns} matrix`);
         }
 
-        const range = new Array(this.rows).fill(0);
         return new Matrix(this.values.map((row, i) => other.values[i].map((value, j) => value + row[j])));
     }
 
     /**
+     * #TODO
+     *
      * @returns {Matrix}
      */
     inverse() {
         throw Error('Not implemented!');
+    }
+
+    /**
+     * Returns this matrixes transpose.
+     *
+     * @returns {Matrix}
+     */
+    transpose() {
+        if (!this.rows) return this;
+        const range = new Array(this.rows).fill(0);
+        return new Matrix(this.values[0].map((_, i) => range.map((_, j) => this.values[j][i])));
     }
 
     /**
@@ -190,7 +202,45 @@ class Matrix {
     }
 
     /**
+     * Creates a transition matrix using homogenous coordinates. uvn represent the axes of the source coordinate
+     * system defined in the destination coordinate system
+     *
+     * #TODO: Write a generalized method for generating this.
+     *
+     * @param {Vector3} u x-axis of the destination coordinate system
+     * @param {Vector3} v y-axis of the destination coordinate system
+     * @param {Vector3} n z-axis of the destination coordinate system
+     */
+    static transition(u, v, n) {
+        const a = u.normalised();
+        const b = v.normalised();
+        const c = n.normalised();
+
+        return new Matrix([
+            [a.x, b.x, c.x, 0],
+            [a.y, b.y, c.y, 0],
+            [a.z, b.z, c.z, 0],
+            [0, 0, 0, 1]
+        ]);
+    }
+
+    /**
+     * Creates a view matrix using the UVN convention.
+     *
+     * @param {Vector3} position Position vector (uninverted)
+     * @param {Vector3} u Right vector
+     * @param {Vector3} v Up vector
+     * @param {Vector3} n Forward vector
+     */
+    static view(position, u, v, n) {
+        const inverseTranslationMatrix = Matrix.translate(-position.x, -position.y, -position.z);
+        const inverseTransitionMatrix = Matrix.transition(u, v, n).transpose();
+        return inverseTransitionMatrix.multiply(inverseTranslationMatrix);
+    }
+
+    /**
      * Creates a projection matrix
+     *
      * @param {*} fieldOfViewDegrees
      * @param {*} aspectRatio
      * @param {*} near
@@ -254,6 +304,13 @@ class Vector extends Matrix {
      */
     add(other) {
         return new Vector(super.add(other).values[0]);
+    }
+
+    /**
+     * @returns {Vector}
+     */
+    normalised() {
+        return this.multiply(1 / this.length);
     }
 }
 
@@ -373,6 +430,11 @@ class Vector3 extends Vector {
      */
     add(other) {
         const values = super.add(other).values[0];
+        return new Vector3(values[0][0], values[1][0], values[2][0]);
+    }
+
+    normalised() {
+        const values = super.multiply(1 / this.length).values;
         return new Vector3(values[0][0], values[1][0], values[2][0]);
     }
 

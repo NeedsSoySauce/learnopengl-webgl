@@ -16,17 +16,17 @@ canvas {
     border: 1px dashed lightgray;
 }
 
-.transform {
+.control-group-container {
     display: flex;
 }
 
-.transform .control-group {
+.control-group-container .control-group {
     margin: 0;
     padding: 8px;
     background-color: #d3d3d34a;
 }
 
-.transform .control-group input {
+.control-group-container .control-group input {
     width: 72px;
 }
 

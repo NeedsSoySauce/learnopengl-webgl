@@ -49,10 +49,10 @@ class SceneObject {
         this.zRotationMatrix = Matrix.rotate(this.rotation.z, Vector3.z);
         this.modelMatrix = MathUtils.multiplyMatrices([
             this.translationMatrix,
-            this.scaleMatrix,
             this.xRotationMatrix,
             this.yRotationMatrix,
-            this.zRotationMatrix
+            this.zRotationMatrix,
+            this.scaleMatrix
         ]);
         this.modelMatrixArray = this.modelMatrix.toArray();
     }

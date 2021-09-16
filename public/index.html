@@ -24,7 +24,7 @@
 
     <canvas width="800" height="600"></canvas>
 
-    <div class="transform">
+    <div class="control-group-container">
         <div class="control-group">
             <h4>Position</h4>
             <label for="x-position">x</label>
@@ -53,6 +53,18 @@
             <input id="y-rotation" type="number" value="0" step="10"></input>
             <label for="z-rotation">z</label>
             <input id="z-rotation" type="number" value="0" step="10"></input>
+        </div>
+    </div>
+
+    <div class="control-group-container">
+        <div class="control-group">
+            <h4>Projection</h4>
+            <label for="fov">Field of view (degrees)</label>
+            <input id="fov" type="number" value="90" step="5"></input>
+            <label for="near">Near</label>
+            <input id="near" type="number" value="0.1" step="0.1"></input>
+            <label for="far">Far</label>
+            <input id="far" type="number" value="10" step="1"></input>
         </div>
     </div>
 

@@ -69,6 +69,17 @@ const main = async () => {
     const sceneObject = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
     scene.addObject(sceneObject);
 
+    const camera = {
+        position: new Vector3(0, 0, 0)
+    };
+
+    const projection = {
+        fieldOfViewDegrees: 90,
+        aspectRatio: gl.canvas.width / gl.canvas.height,
+        near: 0.1,
+        far: 10
+    };
+
     const transform = {
         position: Vector3.zero,
         scale: Vector3.one,
@@ -79,15 +90,19 @@ const main = async () => {
     let x = 0;
     const renderFunction = (deltaTime) => {
         x += deltaTime;
-        // sceneObject.setPosition(Vector3.one.multiply(Math.sin(x * 3) / 4));
-        // sceneObject.setScale(Vector3.one.multiply(1 + Math.sin(x * 3) / 4));
-        sceneObject.setRotation(new Vector3(0, (x * 10) % 360, 0));
+        sceneObject.setPosition(position);
+        sceneObject.setScale(scale);
+        sceneObject.setRotation(new Vector3(rotation.x, (x * 10) % 360, rotation.z));
         gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
-        gl.uniformMatrix4fv(viewMatrixAttributeLocation, false, Matrix.translate(0, 0, 2).toArray());
+        gl.uniformMatrix4fv(
+            viewMatrixAttributeLocation,
+            false,
+            Matrix.view(camera.position, new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)).toArray()
+        );
         gl.uniformMatrix4fv(
             projectionMatrixAttributeLocation,
             false,
-            Matrix.perspective(90, gl.canvas.width / gl.canvas.height, 2.1, 2.6).toArray()
+            Matrix.perspective(90, gl.canvas.width / gl.canvas.height, 0.1, 10).toArray()
         );
 
         for (const sceneObject of scene.objects) {
@@ -168,13 +183,16 @@ const main = async () => {
     renderLoopToggleHtmlButtonElement.click();
 };
 
+window.addEventListener('keydown', (e) => {
+    console.log(e.code);
+});
+
 window.addEventListener('DOMContentLoaded', () => {
     main().catch((e) => {
         console.error(e);
         pre.classList.add('error');
         pre.textContent = `${e.stack ? e.stack : e}`;
     });
-
     // const matrixA = new Matrix([
     //     [1, 2, 3],
     //     [4, 5, 6]
@@ -188,38 +206,30 @@ window.addEventListener('DOMContentLoaded', () => {
     //     [9, 10],
     //     [11, 12]
     // ]);
-
     // log(matrixA);
     // log(matrixA.getRowVector(0));
     // log(matrixC.getColumnVector(0));
     // log(matrixC.getColumnVector(0));
     // log(matrixA.multiply(matrixC));
-
     // const vectorA = new Vector([-4, -9]);
     // const vectorB = new Vector([-1, 2]);
     // console.log(vectorA.dot(vectorB));
     // log(vectorA)
     // log(vectorB)
-
     // const vectorA = new Vector3(2, 3, 4);
     // const vectorB = new Vector3(5, 6, 7);
     // log(vectorA.cross(vectorB));
-
     // const identityMatrix = Matrix.identity(4);
     // log(identityMatrix);
-
     // const scalingMatrix = Matrix.scale(2, 3, 4);
     // log(scalingMatrix);
-
     // const translationMatrix = Matrix.translate(2, 3, 4);
     // log(translationMatrix);
-
     // const vector2 = new Vector2(123, -12);
     // const polar = vector2.toPolar();
     // log(vector2);
     // log(polar);
     // log(polar.toCartesian());
-
     // const quaternionA = new Quaternion(7, new Vector3(2, 3, 4));
     // const quaternionB = new Quaternion(1, new Vector3(2, 3, 4));
     // log(quaternionA.add(quaternionB));
@@ -228,29 +238,35 @@ window.addEventListener('DOMContentLoaded', () => {
     // log(quaternionB.length);
     // log(quaternionB.normalized());
     // log(quaternionB.inverse());
-
     // const axisOfRotation = new Vector3(1, 1, 0);
     // const axis = Vector3.x();
     // const directionCosineA = MathUtils.directionCosine(axisOfRotation, axis);
     // console.log(directionCosineA);
-
     // const rotationMatrix = Matrix.rotate(45, Vector3.x);
     // log(rotationMatrix);
-
     // const scalingMatrix = Matrix.scale(2, 3, 4);
     // log(scalingMatrix);
-
     // const vertex = new Vector4(1, 2, 3, 4);
     // log(vertex);
-
     // vertex.x = 2;
     // vertex.y = 3;
     // vertex.z = 4;
     // vertex.w = 5;
     // log(vertex);
-
     // let result = scalingMatrix.multiply(vertex);
     // log(result);
-
     // log(scalingMatrix.toArray());
+    // const vectorA = new Vector([-4, -9]);
+    // log(vectorA.length);
+    // log(vectorA.normalised());
+    // log(vectorA.normalised().length);
+    // const transitionMatrix = Matrix.transition(new Vector3(1, -1, 0), new Vector3(1, 1, 0), new Vector3(0, 0, 1));
+    // const transitionMatrix = Matrix.transition(new Vector3(1, -1, 0), new Vector3(1, 1, 0), new Vector3(0, 0, 1));
+    // const vectorA = new Vector4(1, 1, 0, 1);
+    // log(transitionMatrix.multiply(vectorA));
+    // const position = new Vector3(1, 1, 0);
+    // const viewMatrix = Matrix.view(position, new Vector3(1, -1, 0), new Vector3(1, 1, 0), new Vector3(0, 0, 1));
+    // log(viewMatrix);
+    // const vectorA = new Vector4(2, 2, 0, 1);
+    // log(viewMatrix.multiply(vectorA));
 });
