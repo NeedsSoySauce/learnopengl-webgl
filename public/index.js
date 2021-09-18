@@ -4,6 +4,7 @@ import { ShaderUtils } from './shader.js';
 import { RenderLoop } from './render.js';
 import { cube, pyramid, triangle } from './shape.js';
 import { bindInput, bindInputVector3 } from './binding.js';
+import { Camera } from './camera.js';
 
 const canvas = document.querySelector('canvas');
 const objFileInput = document.querySelector('#object');
@@ -19,6 +20,37 @@ const log = (obj) => console.log(obj.toString());
  * @returns {Promise<string>}
  */
 const fetchText = async (path) => (await fetch(path)).text();
+
+const registerKeyHandlers = () => {
+    let keyDownStates = new Map();
+
+    window.addEventListener(
+        'blur',
+        () => {
+            keyDownStates.clear();
+        },
+        false
+    );
+
+    window.addEventListener('keydown', (e) => {
+        keyDownStates.set(e.code, true);
+    });
+
+    window.addEventListener('keyup', (e) => {
+        keyDownStates.set(e.code, false);
+    });
+
+    const keys = {
+        /**
+         * @param {string} key
+         */
+        isKeyDown(key) {
+            return keyDownStates.get(key) === true;
+        }
+    };
+
+    return keys;
+};
 
 const main = async () => {
     const vertexShaderSource = await fetchText('./shaders/vertex.glsl');
@@ -79,9 +111,25 @@ const main = async () => {
     const sceneObject = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
     scene.addObject(sceneObject);
 
-    const camera = {
-        position: new Vector3(0, 0, 0)
+    const camera = new Camera(new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
+
+    const cameraState = {
+        position: bindInputVector3('#x-camera-position', '#y-camera-position', '#z-camera-position', camera.position)
     };
+
+    const { isKeyDown } = registerKeyHandlers();
+
+    // Note: this movement method isn't great as you move faster when moving in more than one direction at once
+    const keyHandlers = new Map(
+        Object.entries({
+            KeyW: (deltaTime) => camera.forward(deltaTime),
+            KeyA: (deltaTime) => camera.strafeLeft(deltaTime),
+            KeyS: (deltaTime) => camera.backward(deltaTime),
+            KeyD: (deltaTime) => camera.strafeRight(deltaTime),
+            ControlLeft: (deltaTime) => camera.moveDown(deltaTime),
+            Space: (deltaTime) => camera.moveUp(deltaTime)
+        })
+    );
 
     const transform = {
         position: bindInputVector3('#x-position', '#y-position', '#z-position', new Vector3(0, 0, 1.5)),
@@ -89,19 +137,41 @@ const main = async () => {
         rotation: bindInputVector3('#x-rotation', '#y-rotation', '#z-rotation', new Vector3(0, 0, 0))
     };
 
+    let animate = true;
+
+    window.addEventListener(
+        'focus',
+        () => {
+            animate = true;
+        },
+        false
+    );
+
+    window.addEventListener(
+        'blur',
+        () => {
+            animate = false;
+        },
+        false
+    );
+
     let x = 0;
     const renderFunction = (deltaTime) => {
-        x += deltaTime;
-        transform.rotation.y = (x * 45) % 360;
+        if (!animate) return;
+        cameraState.position.value = camera.position;
+
+        for (const [key, callback] of keyHandlers) {
+            if (isKeyDown(key)) {
+                callback(deltaTime);
+            }
+        }
+        // x += deltaTime;
+        // transform.rotation.y = animate ? (x * 45) % 360 : transform.rotation.y;
         sceneObject.setPosition(transform.position.value);
         sceneObject.setScale(transform.scale.value);
         sceneObject.setRotation(transform.rotation.value);
         gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
-        gl.uniformMatrix4fv(
-            viewMatrixAttributeLocation,
-            false,
-            Matrix.view(camera.position, new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1)).toArray()
-        );
+        gl.uniformMatrix4fv(viewMatrixAttributeLocation, false, camera.viewMatrix.toArray());
         gl.uniformMatrix4fv(
             projectionMatrixAttributeLocation,
             false,
@@ -171,10 +241,6 @@ const main = async () => {
 
     renderLoopToggleHtmlButtonElement.click();
 };
-
-window.addEventListener('keydown', (e) => {
-    console.log(e.code);
-});
 
 window.addEventListener('DOMContentLoaded', () => {
     main().catch((e) => {

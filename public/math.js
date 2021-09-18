@@ -227,10 +227,12 @@ class Matrix {
     /**
      * Creates a view matrix using the UVN convention.
      *
+     * Note: `u`, `v`, and `n` must be perpendicular to eachother.
+     *
      * @param {Vector3} position Position vector (uninverted)
      * @param {Vector3} u Right vector
      * @param {Vector3} v Up vector
-     * @param {Vector3} n Forward vector
+     * @param {Vector3} n Target vector
      */
     static view(position, u, v, n) {
         const inverseTranslationMatrix = Matrix.translate(-position.x, -position.y, -position.z);
@@ -303,7 +305,8 @@ class Vector extends Matrix {
      * @param {Vector} other
      */
     add(other) {
-        return new Vector(super.add(other).values[0]);
+        const values = super.add(other).values;
+        return new Vector(values.map((row) => row[0]));
     }
 
     /**
@@ -421,7 +424,7 @@ class Vector3 extends Vector {
      */
     multiply(other) {
         const values = super.multiply(other).values;
-        return new Vector3(values[0], values[1], values[2]);
+        return new Vector3(values[0][0], values[1][0], values[2][0]);
     }
 
     /**
@@ -429,7 +432,7 @@ class Vector3 extends Vector {
      * @returns {Vector3}
      */
     add(other) {
-        const values = super.add(other).values[0];
+        const values = super.add(other).values;
         return new Vector3(values[0][0], values[1][0], values[2][0]);
     }
 
