@@ -8,13 +8,15 @@ class Camera {
      * @param {Vector3} target Look at vector
      * @param {Vector3} up Up vector
      * @param {number} speed Units per second
+     * @param {number} mouseSensitivity
      */
-    constructor(position = Vector3.zero, target = Vector3.z, up = Vector3.y, speed = 1) {
+    constructor(position = Vector3.zero, target = Vector3.z, up = Vector3.y, speed = 1, mouseSensitivity = 0.2) {
         this.position = position;
         this.rotation = Vector3.zero;
         this.target = target;
         this.up = up;
         this.speed = speed;
+        this.mouseSensitivity = mouseSensitivity;
         this.viewMatrix = Matrix.identity(4);
         this.viewMatrixArray = this.viewMatrix.toArray();
         this._updateViewMatrix();
@@ -26,6 +28,20 @@ class Camera {
         const v = n.cross(u);
         this.viewMatrix = Matrix.view(this.position, u, v, n);
         this.viewMatrixArray = this.viewMatrix.toArray();
+        console.log(this.target.toString());
+    }
+
+    _updateUvnVectors() {
+        const yAxis = Vector3.y;
+
+        const horizontalTarget = this.target.rotate(this.rotation.x, yAxis).normalised();
+        const horizontalAxis = yAxis.cross(horizontalTarget).normalised();
+        const n = horizontalTarget.rotate(this.rotation.y, horizontalAxis).normalised();
+        const v = n.cross(horizontalAxis);
+
+        this.target = n;
+        this.up = v;
+        this._updateViewMatrix();
     }
 
     /**
@@ -40,7 +56,8 @@ class Camera {
      * @param {Vector3} rotation
      */
     rotate(rotation) {
-        this.rotation = this.rotation.add(rotation);
+        this.rotation = rotation.multiply(this.mouseSensitivity);
+        this._updateUvnVectors();
     }
 
     forward(deltaTime) {

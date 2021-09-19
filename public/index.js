@@ -124,7 +124,7 @@ const main = async () => {
      * @param {MouseEvent} e
      */
     const updatePosition = (e) => {
-        console.log(e.movementX, e.movementY);
+        camera.rotate(new Vector3(e.movementX, e.movementY, 0));
     };
 
     gl.canvas.addEventListener('click', () => gl.canvas.requestPointerLock());
@@ -272,7 +272,4 @@ window.addEventListener('DOMContentLoaded', () => {
         pre.classList.add('error');
         pre.textContent = `${e.stack ? e.stack : e}`;
     });
-
-    const v2 = new Vector3(1, 0, 0);
-    log(v2.rotate(45, Vector3.z));
 });
