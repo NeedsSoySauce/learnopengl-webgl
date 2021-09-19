@@ -66,7 +66,6 @@ const main = async () => {
     // Only continue if WebGL is available and working
     if (!ShaderUtils.isWebGLAvailable(gl)) {
         throw Error('Unable to initialize WebGL. Your browser or machine may not support it.');
-        return;
     }
 
     // Setup shaders
