@@ -33,10 +33,12 @@ const registerKeyHandlers = () => {
     );
 
     window.addEventListener('keydown', (e) => {
+        e.preventDefault();
         keyDownStates.set(e.code, true);
     });
 
     window.addEventListener('keyup', (e) => {
+        e.preventDefault();
         keyDownStates.set(e.code, false);
     });
 
@@ -119,6 +121,26 @@ const main = async () => {
 
     const { isKeyDown } = registerKeyHandlers();
 
+    /**
+     * @param {MouseEvent} e
+     */
+    const updatePosition = (e) => {
+        console.log(e.movementX, e.movementY);
+    };
+
+    gl.canvas.addEventListener('click', () => gl.canvas.requestPointerLock());
+    document.addEventListener(
+        'pointerlockchange',
+        (e) => {
+            if (document.pointerLockElement === gl.canvas) {
+                document.addEventListener('mousemove', updatePosition, false);
+            } else {
+                document.removeEventListener('mousemove', updatePosition, false);
+            }
+        },
+        false
+    );
+
     // Note: this movement method isn't great as you move faster when moving in more than one direction at once
     const keyHandlers = new Map(
         Object.entries({
@@ -160,11 +182,14 @@ const main = async () => {
         if (!animate) return;
         cameraState.position.value = camera.position;
 
-        for (const [key, callback] of keyHandlers) {
-            if (isKeyDown(key)) {
-                callback(deltaTime);
+        if (document.pointerLockElement === gl.canvas) {
+            for (const [key, callback] of keyHandlers) {
+                if (isKeyDown(key)) {
+                    callback(deltaTime);
+                }
             }
         }
+
         // x += deltaTime;
         // transform.rotation.y = animate ? (x * 45) % 360 : transform.rotation.y;
         sceneObject.setPosition(transform.position.value);
