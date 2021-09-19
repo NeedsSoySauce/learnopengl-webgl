@@ -441,6 +441,21 @@ class Vector3 extends Vector {
         return new Vector3(values[0][0], values[1][0], values[2][0]);
     }
 
+    /**
+     * Creates a copy of this vector that is rotated `degrees` around `axis`.
+     *
+     * @param {number} degrees
+     * @param {Vector3} axis
+     * @returns {Vector3}
+     */
+    rotate(degrees, axis) {
+        const rotation = Quaternion.fromRotation(degrees, axis);
+        const conjugate = rotation.conjugate();
+        const p = Quaternion.pure(this);
+        const qpq = rotation.multiply(p).multiply(conjugate);
+        return new Vector3(qpq.v.x, qpq.v.y, qpq.v.z);
+    }
+
     static get zero() {
         return new Vector3(0, 0, 0);
     }

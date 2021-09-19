@@ -272,4 +272,7 @@ window.addEventListener('DOMContentLoaded', () => {
         pre.classList.add('error');
         pre.textContent = `${e.stack ? e.stack : e}`;
     });
+
+    const v2 = new Vector3(1, 0, 0);
+    log(v2.rotate(45, Vector3.z));
 });
