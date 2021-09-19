@@ -195,7 +195,7 @@ const main = async () => {
         sceneObject.setScale(transform.scale.value);
         sceneObject.setRotation(transform.rotation.value);
         gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
-        gl.uniformMatrix4fv(viewMatrixAttributeLocation, false, camera.viewMatrix.toArray());
+        gl.uniformMatrix4fv(viewMatrixAttributeLocation, false, camera.viewMatrixArray);
         gl.uniformMatrix4fv(
             projectionMatrixAttributeLocation,
             false,
