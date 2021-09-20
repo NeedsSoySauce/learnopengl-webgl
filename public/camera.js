@@ -13,30 +13,51 @@ class Camera {
     constructor(position = Vector3.zero, target = Vector3.z, up = Vector3.y, speed = 1, mouseSensitivity = 0.2) {
         this.position = position;
         this.rotation = Vector3.zero;
+        this.deltaRotation = Vector3.zero;
         this.target = target;
         this.up = up;
         this.speed = speed;
         this.mouseSensitivity = mouseSensitivity;
         this.viewMatrix = Matrix.identity(4);
         this.viewMatrixArray = this.viewMatrix.toArray();
+
+        // For debugging
+        this._u = Vector3.zero;
+        this._v = Vector3.zero;
+        this._n = Vector3.zero;
+
         this._updateViewMatrix();
+    }
+
+    get u() {
+        return this._u;
+    }
+
+    get v() {
+        return this._v;
+    }
+
+    get n() {
+        return this._n;
     }
 
     _updateViewMatrix() {
         const n = this.target.normalised();
         const u = this.up.cross(n).normalised();
         const v = n.cross(u);
+        this._u = u;
+        this._v = v;
+        this._n = n;
         this.viewMatrix = Matrix.view(this.position, u, v, n);
         this.viewMatrixArray = this.viewMatrix.toArray();
-        console.log(this.target.toString());
     }
 
     _updateUvnVectors() {
         const yAxis = Vector3.y;
 
-        const horizontalTarget = this.target.rotate(this.rotation.x, yAxis).normalised();
+        const horizontalTarget = this.target.rotate(this.deltaRotation.x, yAxis).normalised();
         const horizontalAxis = yAxis.cross(horizontalTarget).normalised();
-        const n = horizontalTarget.rotate(this.rotation.y, horizontalAxis).normalised();
+        const n = horizontalTarget.rotate(this.deltaRotation.y, horizontalAxis).normalised();
         const v = n.cross(horizontalAxis);
 
         this.target = n;
@@ -56,7 +77,8 @@ class Camera {
      * @param {Vector3} rotation
      */
     rotate(rotation) {
-        this.rotation = rotation.multiply(this.mouseSensitivity);
+        this.deltaRotation = rotation.multiply(this.mouseSensitivity);
+        this.rotation = this.rotation.add(this.deltaRotation);
         this._updateUvnVectors();
     }
 

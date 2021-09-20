@@ -115,7 +115,11 @@ const main = async () => {
     const camera = new Camera(new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
 
     const cameraState = {
-        position: bindInputVector3('#x-camera-position', '#y-camera-position', '#z-camera-position', camera.position)
+        position: bindInputVector3('#x-camera-position', '#y-camera-position', '#z-camera-position', camera.position),
+        rotation: bindInputVector3('#x-camera-rotation', '#y-camera-rotation', '#z-camera-rotation', camera.rotation),
+        u: bindInputVector3('#u-x-component', '#u-y-component', '#u-z-component', camera.u),
+        v: bindInputVector3('#v-x-component', '#v-y-component', '#v-z-component', camera.u),
+        n: bindInputVector3('#n-x-component', '#n-y-component', '#n-z-component', camera.u)
     };
 
     const { isKeyDown } = registerKeyHandlers();
@@ -180,6 +184,10 @@ const main = async () => {
     const renderFunction = (deltaTime) => {
         if (!animate) return;
         cameraState.position.value = camera.position;
+        cameraState.rotation.value = camera.rotation;
+        cameraState.u.value = camera.u;
+        cameraState.v.value = camera.v;
+        cameraState.n.value = camera.n;
 
         if (document.pointerLockElement === gl.canvas) {
             for (const [key, callback] of keyHandlers) {
