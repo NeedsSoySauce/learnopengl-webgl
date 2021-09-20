@@ -1,4 +1,4 @@
-import { Matrix, Vector3 } from './math.js';
+import { MathUtils, Matrix, Vector3 } from './math.js';
 
 class Camera {
     /**
@@ -7,17 +7,14 @@ class Camera {
      * @param {Vector3} position
      * @param {Vector3} target Look at vector
      * @param {Vector3} up Up vector
-     * @param {number} speed Units per second
-     * @param {number} mouseSensitivity
      */
-    constructor(position = Vector3.zero, target = Vector3.z, up = Vector3.y, speed = 1, mouseSensitivity = 0.2) {
+    constructor(position = Vector3.zero, target = Vector3.z, up = Vector3.y) {
         this.position = position;
         this.rotation = Vector3.zero;
         this.deltaRotation = Vector3.zero;
+        this.initialTarget = target;
         this.target = target;
         this.up = up;
-        this.speed = speed;
-        this.mouseSensitivity = mouseSensitivity;
         this.viewMatrix = Matrix.identity(4);
         this.viewMatrixArray = this.viewMatrix.toArray();
 
@@ -57,12 +54,22 @@ class Camera {
 
         const horizontalTarget = this.target.rotate(this.deltaRotation.x, yAxis).normalised();
         const horizontalAxis = yAxis.cross(horizontalTarget).normalised();
-        const n = horizontalTarget.rotate(this.deltaRotation.y, horizontalAxis).normalised();
+        const n = horizontalTarget.rotate(-this.deltaRotation.y, horizontalAxis).normalised();
         const v = n.cross(horizontalAxis);
 
         this.target = n;
         this.up = v;
         this._updateViewMatrix();
+    }
+
+    /**
+     * @param {Vector3} target
+     */
+    setTarget(target) {
+        this.target = target.add(this.position.multiply(-1));
+        this.deltaRotation = Vector3.zero;
+        this.rotation = Vector3.zero;
+        this._updateUvnVectors();
     }
 
     /**
@@ -76,41 +83,61 @@ class Camera {
     /**
      * @param {Vector3} rotation
      */
+    setRotation(rotation) {
+        this.target = this.initialTarget;
+        this.deltaRotation = rotation;
+        this._updateUvnVectors();
+    }
+
+    /**
+     * @param {Vector3} rotation
+     */
     rotate(rotation) {
-        this.deltaRotation = rotation.multiply(this.mouseSensitivity);
-        this.rotation = this.rotation.add(this.deltaRotation);
+        const delta = new Vector3(rotation.x, -rotation.y, 0);
+        this.deltaRotation = delta;
+        this.rotation = this.rotation.add(delta);
         this._updateUvnVectors();
     }
 
     forward(deltaTime) {
-        this.position = this.position.add(this.target.multiply(this.speed * deltaTime));
+        this.position = this.position.add(this.target.multiply(deltaTime));
         this._updateViewMatrix();
     }
 
     backward(deltaTime) {
-        this.position = this.position.add(this.target.multiply(-this.speed * deltaTime));
+        this.position = this.position.add(this.target.multiply(-deltaTime));
         this._updateViewMatrix();
     }
 
     strafeLeft(deltaTime) {
         const left = this.target.cross(this.up).normalised();
-        this.position = this.position.add(left.multiply(this.speed * deltaTime));
+        this.position = this.position.add(left.multiply(deltaTime));
         this._updateViewMatrix();
     }
 
     strafeRight(deltaTime) {
         const right = this.up.cross(this.target).normalised();
-        this.position = this.position.add(right.multiply(this.speed * deltaTime));
+        this.position = this.position.add(right.multiply(deltaTime));
+        this._updateViewMatrix();
+    }
+
+    strafeUp(deltaTime) {
+        this.position = this.position.add(this.up.multiply(deltaTime));
+        this._updateViewMatrix();
+    }
+
+    strafeDown(deltaTime) {
+        this.position = this.position.add(this.up.multiply(-deltaTime));
         this._updateViewMatrix();
     }
 
     moveUp(deltaTime) {
-        this.position = this.position.add(Vector3.y.multiply(this.speed * deltaTime));
+        this.position = this.position.add(Vector3.y.multiply(deltaTime));
         this._updateViewMatrix();
     }
 
     moveDown(deltaTime) {
-        this.position = this.position.add(Vector3.y.multiply(-this.speed * deltaTime));
+        this.position = this.position.add(Vector3.y.multiply(-deltaTime));
         this._updateViewMatrix();
     }
 }

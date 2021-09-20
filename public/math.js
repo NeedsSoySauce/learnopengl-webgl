@@ -31,6 +31,20 @@ class MathUtils {
         if (matrices.length < 2) throw Error('Multiplication requires at least two matrices');
         return matrices.slice(1).reduce((prev, curr) => prev.multiply(curr), matrices[0]);
     }
+
+    /**
+     * Limits `value` to a number between `min` and `max`.
+     *
+     * @param {number} value
+     * @param {number} min
+     * @param {number} max
+     * @returns
+     */
+    static clamp(value, min, max) {
+        if (value > max) return max;
+        if (value < min) return min;
+        return value;
+    }
 }
 
 class Matrix {

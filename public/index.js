@@ -112,7 +112,7 @@ const main = async () => {
     const sceneObject = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
     scene.addObject(sceneObject);
 
-    const camera = new Camera(new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
+    const camera = new Camera(new Vector3(-2, 2, -3), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
 
     const cameraState = {
         position: bindInputVector3('#x-camera-position', '#y-camera-position', '#z-camera-position', camera.position),
@@ -151,13 +151,15 @@ const main = async () => {
             KeyA: (deltaTime) => camera.strafeLeft(deltaTime),
             KeyS: (deltaTime) => camera.backward(deltaTime),
             KeyD: (deltaTime) => camera.strafeRight(deltaTime),
-            ControlLeft: (deltaTime) => camera.moveDown(deltaTime),
-            Space: (deltaTime) => camera.moveUp(deltaTime)
+            ControlLeft: (deltaTime) => camera.strafeDown(deltaTime),
+            Space: (deltaTime) => camera.strafeUp(deltaTime)
+            // ControlLeft: (deltaTime) => camera.moveDown(deltaTime),
+            // Space: (deltaTime) => camera.moveUp(deltaTime)
         })
     );
 
     const transform = {
-        position: bindInputVector3('#x-position', '#y-position', '#z-position', new Vector3(0, 0, 1.5)),
+        position: bindInputVector3('#x-position', '#y-position', '#z-position', new Vector3(0, 0, 0)),
         scale: bindInputVector3('#x-scale', '#y-scale', '#z-scale', new Vector3(1, 1, 1)),
         rotation: bindInputVector3('#x-rotation', '#y-rotation', '#z-rotation', new Vector3(0, 0, 0))
     };
@@ -179,6 +181,8 @@ const main = async () => {
         },
         false
     );
+
+    camera.setRotation(new Vector3(45, -45, 0));
 
     let x = 0;
     const renderFunction = (deltaTime) => {
@@ -280,4 +284,28 @@ window.addEventListener('DOMContentLoaded', () => {
         pre.classList.add('error');
         pre.textContent = `${e.stack ? e.stack : e}`;
     });
+
+    const v = new Vector3(0, 0, 1);
+    const res = v.rotate(90, Vector3.x);
+    // log(v);
+    // log(res);
+
+    const yAxis = Vector3.y;
+
+    const horizontalTarget = v.rotate(0, yAxis).normalised();
+    const horizontalAxis = yAxis.cross(horizontalTarget).normalised();
+    const target = horizontalTarget.rotate(90, horizontalAxis).normalised();
+
+    console.log('horizontalTarget');
+    log(horizontalTarget);
+    console.log('horizontalAxis');
+    log(horizontalAxis);
+    console.log('target');
+    log(target);
+
+    console.log('########################## camera');
+    const camera = new Camera(Vector3.zero, v, yAxis);
+    log(camera.target);
+    camera.rotate(new Vector3(0, 90, 0));
+    log(camera.target);
 });
