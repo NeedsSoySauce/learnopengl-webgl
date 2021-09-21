@@ -284,28 +284,4 @@ window.addEventListener('DOMContentLoaded', () => {
         pre.classList.add('error');
         pre.textContent = `${e.stack ? e.stack : e}`;
     });
-
-    const v = new Vector3(0, 0, 1);
-    const res = v.rotate(90, Vector3.x);
-    // log(v);
-    // log(res);
-
-    const yAxis = Vector3.y;
-
-    const horizontalTarget = v.rotate(0, yAxis).normalised();
-    const horizontalAxis = yAxis.cross(horizontalTarget).normalised();
-    const target = horizontalTarget.rotate(90, horizontalAxis).normalised();
-
-    console.log('horizontalTarget');
-    log(horizontalTarget);
-    console.log('horizontalAxis');
-    log(horizontalAxis);
-    console.log('target');
-    log(target);
-
-    console.log('########################## camera');
-    const camera = new Camera(Vector3.zero, v, yAxis);
-    log(camera.target);
-    camera.rotate(new Vector3(0, 90, 0));
-    log(camera.target);
 });

@@ -63,6 +63,17 @@ class Camera {
     }
 
     /**
+     * @param {Vector3} rotation
+     * @returns {Vector3}
+     */
+    _setRotation(rotation) {
+        const yRotation = MathUtils.clamp(rotation.y, -90, 90);
+        const newRotation = new Vector3(rotation.x, yRotation, 0);
+        this.deltaRotation = newRotation.add(this.rotation.multiply(-1));
+        this.rotation = newRotation;
+    }
+
+    /**
      * @param {Vector3} target
      */
     setTarget(target) {
@@ -85,7 +96,7 @@ class Camera {
      */
     setRotation(rotation) {
         this.target = this.initialTarget;
-        this.deltaRotation = rotation;
+        this._setRotation(rotation);
         this._updateUvnVectors();
     }
 
@@ -93,9 +104,7 @@ class Camera {
      * @param {Vector3} rotation
      */
     rotate(rotation) {
-        const delta = new Vector3(rotation.x, -rotation.y, 0);
-        this.deltaRotation = delta;
-        this.rotation = this.rotation.add(delta);
+        this._setRotation(this.rotation.add(new Vector3(rotation.x, -rotation.y, 0)));
         this._updateUvnVectors();
     }
 
