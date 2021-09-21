@@ -2,7 +2,7 @@ import { Matrix, Vector, Vector3, Vector4 } from './math.js';
 import { Scene, SceneObject } from './scene.js';
 import { ShaderUtils } from './shader.js';
 import { RenderLoop } from './render.js';
-import { cube, pyramid, triangle } from './shape.js';
+import { cube, plane, pyramid, triangle } from './shape.js';
 import { bindInput, bindInputVector3 } from './binding.js';
 import { Camera } from './camera.js';
 
@@ -102,17 +102,21 @@ const main = async () => {
         fieldOfViewDegrees: bindInput('#fov', 90),
         aspectRatio: bindInput('#aspectRatio', gl.canvas.width / gl.canvas.height),
         near: bindInput('#near', 0.1),
-        far: bindInput('#far', 10)
+        far: bindInput('#far', 100)
     };
 
     const { fieldOfViewDegrees, aspectRatio, near, far } = projection;
 
-    const shape = cube();
     const scene = new Scene();
+    const shape = cube();
     const sceneObject = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
     scene.addObject(sceneObject);
 
-    const camera = new Camera(new Vector3(-2, 2, -3), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
+    const shape2 = plane();
+    const sceneObject2 = new SceneObject(shape2.vertices, shape2.indices, shape2.drawMode);
+    scene.addObject(sceneObject2);
+
+    const camera = new Camera(new Vector3(-2, 2, -1), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
 
     const cameraState = {
         position: bindInputVector3('#x-camera-position', '#y-camera-position', '#z-camera-position', camera.position),
@@ -144,15 +148,17 @@ const main = async () => {
         false
     );
 
+    const speed = 5;
+
     // Note: this movement method isn't great as you move faster when moving in more than one direction at once
     const keyHandlers = new Map(
         Object.entries({
-            KeyW: (deltaTime) => camera.forward(deltaTime),
-            KeyA: (deltaTime) => camera.strafeLeft(deltaTime),
-            KeyS: (deltaTime) => camera.backward(deltaTime),
-            KeyD: (deltaTime) => camera.strafeRight(deltaTime),
-            ControlLeft: (deltaTime) => camera.strafeDown(deltaTime),
-            Space: (deltaTime) => camera.strafeUp(deltaTime)
+            KeyW: (deltaTime) => camera.forward(deltaTime * speed),
+            KeyA: (deltaTime) => camera.strafeLeft(deltaTime * speed),
+            KeyS: (deltaTime) => camera.backward(deltaTime * speed),
+            KeyD: (deltaTime) => camera.strafeRight(deltaTime * speed),
+            ControlLeft: (deltaTime) => camera.strafeDown(deltaTime * speed),
+            Space: (deltaTime) => camera.strafeUp(deltaTime * speed)
             // ControlLeft: (deltaTime) => camera.moveDown(deltaTime),
             // Space: (deltaTime) => camera.moveUp(deltaTime)
         })
@@ -182,7 +188,7 @@ const main = async () => {
         false
     );
 
-    camera.setRotation(new Vector3(45, -45, 0));
+    camera.setTarget(new Vector3(0, 0, 0));
 
     let x = 0;
     const renderFunction = (deltaTime) => {

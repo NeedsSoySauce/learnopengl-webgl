@@ -41,6 +41,43 @@ const cube = (sideLength = 1) => {
     };
 };
 
+const plane = (size = 10) => {
+    const halfSize = size / 2;
+
+    // Corners
+
+    const vertices = [
+        [-halfSize, 0, halfSize],
+        [-halfSize, 0, -halfSize],
+        [halfSize, 0, -halfSize],
+        [halfSize, 0, halfSize]
+    ];
+    const indices = [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 0]
+    ];
+
+    for (let i = -halfSize + 1; i < halfSize; i++) {
+        vertices.push([-halfSize, 0, i]);
+        vertices.push([halfSize, 0, i]);
+        indices.push([vertices.length - 2, vertices.length - 1]);
+    }
+
+    for (let i = -halfSize + 1; i < halfSize; i++) {
+        vertices.push([i, 0, -halfSize]);
+        vertices.push([i, 0, halfSize]);
+        indices.push([vertices.length - 2, vertices.length - 1]);
+    }
+
+    return {
+        drawMode: WebGL2RenderingContext.LINES,
+        vertices: vertices.flatMap((vertex) => vertex),
+        indices: indices.flatMap((v) => v)
+    };
+};
+
 const pyramid = () => {
     // TODO convert to index buffer
     const vertices = [
@@ -53,4 +90,4 @@ const pyramid = () => {
     return vertices.flatMap((vertex) => vertex);
 };
 
-export { triangle, pyramid, cube };
+export { triangle, pyramid, cube, plane };
