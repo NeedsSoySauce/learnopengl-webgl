@@ -5,6 +5,7 @@ import { RenderLoop } from './render.js';
 import { cube, plane, pyramid, triangle } from './shape.js';
 import { bindInput, bindInputVector3 } from './binding.js';
 import { Camera } from './camera.js';
+import { ObjectFileLoader } from './loader.js';
 
 const canvas = document.querySelector('canvas');
 const objFileInput = document.querySelector('#object');
@@ -115,8 +116,8 @@ const main = async () => {
 
     const scene = new Scene();
     const shape = cube();
-    const sceneObject1 = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
-    scene.addObject(sceneObject1);
+    // const sceneObject1 = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
+    // scene.addObject(sceneObject1);
 
     const shape2 = plane();
     const sceneObject2 = new SceneObject(shape2.vertices, shape2.indices, shape2.drawMode);
@@ -179,6 +180,27 @@ const main = async () => {
         rotation: bindInputVector3('#x-rotation', '#y-rotation', '#z-rotation', new Vector3(0, 0, 0))
     };
 
+    /** @type {(SceneObject|null)} */
+    let selectedSceneObject = null;
+
+    const clearSelection = () => {
+        selectedSceneObject = null;
+        transform.position.value = Vector3.zero;
+        transform.scale.value = Vector3.one;
+        transform.rotation.value = Vector3.zero;
+    };
+
+    /**
+     * @param {SceneObject} sceneObject
+     */
+    const selectSceneObject = (sceneObject) => {
+        clearSelection();
+        transform.position.value = sceneObject.position;
+        transform.scale.value = sceneObject.scale;
+        transform.rotation.value = sceneObject.rotation;
+        selectedSceneObject = sceneObject;
+    };
+
     let x = 0;
     const renderFunction = (deltaTime) => {
         cameraState.position.value = camera.position;
@@ -197,9 +219,13 @@ const main = async () => {
 
         // x += deltaTime;
         // transform.rotation.y = animate ? (x * 45) % 360 : transform.rotation.y;
-        sceneObject1.setPosition(transform.position.value);
-        sceneObject1.setScale(transform.scale.value);
-        sceneObject1.setRotation(transform.rotation.value);
+
+        if (selectedSceneObject) {
+            selectedSceneObject.setPosition(transform.position.value);
+            selectedSceneObject.setScale(transform.scale.value);
+            selectedSceneObject.setRotation(transform.rotation.value);
+        }
+
         gl.uniformMatrix4fv(viewMatrixAttributeLocation, false, camera.viewMatrixArray);
         gl.uniformMatrix4fv(
             projectionMatrixAttributeLocation,
@@ -243,31 +269,18 @@ const main = async () => {
         if (e.target.files.length !== 1) return;
         const file = e.target.files[0];
 
-        const reader = new FileReader();
-        reader.readAsText(file);
-
-        reader.addEventListener('load', () => {
-            pre.textContent = reader.result;
-
-            const lines = reader.result.split('\n');
-
-            let vertices = [];
-
-            for (let line of lines) {
-                if (!line.startsWith('v ')) continue;
-
-                const v = line
-                    .split(' ')
-                    .slice(1)
-                    .map((f) => Number.parseFloat(f));
-
-                vertices = [...vertices, ...v];
-            }
-
-            ShaderUtils.clear(gl);
-            ShaderUtils.draw(gl, vertices, size);
+        ObjectFileLoader.load(file).then((shapeData) => {
+            const sceneObject = new SceneObject(shapeData.vertices, shapeData.indices, shapeData.drawMode);
+            scene.addObject(sceneObject);
+            selectSceneObject(sceneObject);
         });
     });
+
+    const data = await fetchText('./geometry/toon.obj');
+    const shapeData = ObjectFileLoader.fromText(data);
+    const sceneObject = new SceneObject(shapeData.vertices, shapeData.indices, shapeData.drawMode);
+    scene.addObject(sceneObject);
+    selectSceneObject(sceneObject);
 
     renderLoopToggleHtmlButtonElement.click();
 };
