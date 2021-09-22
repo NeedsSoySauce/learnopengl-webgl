@@ -24,23 +24,19 @@ const fetchText = async (path) => (await fetch(path)).text();
 const registerKeyHandlers = () => {
     let keyDownStates = new Map();
 
-    window.addEventListener(
-        'blur',
-        () => {
-            keyDownStates.clear();
-        },
-        false
-    );
+    const blurListener = () => {
+        keyDownStates.clear();
+    };
 
-    window.addEventListener('keydown', (e) => {
+    const keydownListener = (e) => {
         e.preventDefault();
         keyDownStates.set(e.code, true);
-    });
+    };
 
-    window.addEventListener('keyup', (e) => {
+    const keyupListener = (e) => {
         e.preventDefault();
         keyDownStates.set(e.code, false);
-    });
+    };
 
     const keys = {
         /**
@@ -48,6 +44,16 @@ const registerKeyHandlers = () => {
          */
         isKeyDown(key) {
             return keyDownStates.get(key) === true;
+        },
+        unregister() {
+            window.removeEventListener('blur', blurListener, false);
+            window.removeEventListener('keydown', keydownListener);
+            window.removeEventListener('keyup', keyupListener);
+        },
+        listen() {
+            window.addEventListener('blur', blurListener, false);
+            window.addEventListener('keydown', keydownListener);
+            window.addEventListener('keyup', keyupListener);
         }
     };
 
@@ -127,7 +133,7 @@ const main = async () => {
         n: bindInputVector3('#n-x-component', '#n-y-component', '#n-z-component', camera.u)
     };
 
-    const { isKeyDown } = registerKeyHandlers();
+    const { isKeyDown, unregister, listen } = registerKeyHandlers();
 
     /**
      * @param {MouseEvent} e
@@ -142,8 +148,10 @@ const main = async () => {
         (e) => {
             if (document.pointerLockElement === gl.canvas) {
                 document.addEventListener('mousemove', updatePosition, false);
+                listen();
             } else {
                 document.removeEventListener('mousemove', updatePosition, false);
+                unregister();
             }
         },
         false
@@ -171,27 +179,8 @@ const main = async () => {
         rotation: bindInputVector3('#x-rotation', '#y-rotation', '#z-rotation', new Vector3(0, 0, 0))
     };
 
-    let animate = true;
-
-    window.addEventListener(
-        'focus',
-        () => {
-            animate = true;
-        },
-        false
-    );
-
-    window.addEventListener(
-        'blur',
-        () => {
-            animate = false;
-        },
-        false
-    );
-
     let x = 0;
     const renderFunction = (deltaTime) => {
-        if (!animate) return;
         cameraState.position.value = camera.position;
         cameraState.rotation.value = camera.rotation;
         cameraState.u.value = camera.u;
