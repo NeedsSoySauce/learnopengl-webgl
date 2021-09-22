@@ -1,5 +1,10 @@
 class ObjectFileLoader {
-    static fromText(text) {
+    /**
+     * @param {string} text
+     * @param {boolean} wireframe
+     * @returns
+     */
+    static fromText(text, wireframe = false) {
         const lines = text.split('\n');
         const vertices = lines
             .filter((line) => line.startsWith('v '))
@@ -26,16 +31,33 @@ class ObjectFileLoader {
                     })
             );
 
-        const indices = faces.flatMap((face) => face.map((elem) => elem.vertexIndex));
+        let drawMode = WebGL2RenderingContext.TRIANGLES;
+        let indices;
+        if (wireframe) {
+            drawMode = WebGL2RenderingContext.LINES;
+            indices = faces.flatMap((face) => {
+                const faceIndices = face.map((elem) => elem.vertexIndex);
 
-        console.log('lines', lines);
-        console.log('vertices', vertices);
-        console.log('textureCoordinates', textureCoordinates);
-        console.log('vertexNormals', vertexNormals);
-        console.log('faces', faces);
-        console.log('indices', indices);
+                const elems = [faceIndices[0], faceIndices[faceIndices.length - 1]];
+                for (let i = 1; i < faceIndices.length; i++) {
+                    elems.push(faceIndices[i]);
+                    elems.push(faceIndices[i - 1]);
+                }
 
-        return new ShapeData(vertices, indices, WebGL2RenderingContext.TRIANGLES);
+                return elems;
+            });
+        } else {
+            indices = faces.flatMap((face) => face.map((elem) => elem.vertexIndex));
+        }
+
+        // console.log('lines', lines);
+        // console.log('vertices', vertices);
+        // console.log('textureCoordinates', textureCoordinates);
+        // console.log('vertexNormals', vertexNormals);
+        // console.log('faces', faces);
+        // console.log('indices', indices);
+
+        return new ShapeData(vertices, indices, drawMode);
     }
 
     /**

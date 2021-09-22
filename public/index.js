@@ -340,7 +340,7 @@ const main = async () => {
     registerCullingInputs(gl);
 
     const data = await fetchText('./geometry/toon.obj');
-    const shapeData = ObjectFileLoader.fromText(data);
+    const shapeData = ObjectFileLoader.fromText(data, true);
     const sceneObject = new SceneObject(shapeData.vertices, shapeData.indices, shapeData.drawMode);
     scene.addObject(sceneObject);
     selectSceneObject(sceneObject);
