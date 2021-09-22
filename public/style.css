@@ -18,12 +18,12 @@ canvas {
 
 .control-group-container {
     display: flex;
+    background-color: #d3d3d34a;
 }
 
 .control-group-container .control-group {
     margin: 0;
     padding: 8px;
-    background-color: #d3d3d34a;
 }
 
 .control-group-container .control-group input {
@@ -32,4 +32,16 @@ canvas {
 
 .error {
     color: red;
+}
+
+.content {
+    display: flex;
+}
+
+.view {
+    margin-right: 20px;
+}
+
+.inspector {
+    width: calc(min(100%, 900px));
 }

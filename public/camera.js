@@ -105,7 +105,7 @@ class Camera {
      * @param {Vector3} rotation
      */
     rotate(rotation) {
-        this._setRotation(this.rotation.add(new Vector3(rotation.x, -rotation.y, 0)));
+        this._setRotation(this.rotation.add(new Vector3(rotation.x, rotation.y, 0)));
         this._updateUvnVectors();
     }
 

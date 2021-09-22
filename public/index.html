@@ -21,112 +21,117 @@
         <span>Delta time (ms)</span>
         <span id="deltaTime"></span>
     </div>
+    <div class="content">
+        <div class="view">
 
-    <canvas width="800" height="600"></canvas>
-
-    <div class="control-group-container">
-        <div class="control-group">
-            <h4>Position</h4>
-            <label for="x-position">x</label>
-            <input id="x-position" type="number" value="0" step="0.1"></input>
-            <label for="y-position">y</label>
-            <input id="y-position" type="number" value="0" step="0.1"></input>
-            <label for="z-position">z</label>
-            <input id="z-position" type="number" value="0" step="0.1"></input>
+            <canvas width="800" height="600"></canvas>
         </div>
 
-        <div class="control-group">
-            <h4>Scale</h4>
-            <label for="x-scale">x</label>
-            <input id="x-scale" type="number" value="1" step="0.1"></input>
-            <label for="y-scale">y</label>
-            <input id="y-scale" type="number" value="1" step="0.1"></input>
-            <label for="z-scale">z</label>
-            <input id="z-scale" type="number" value="1" step="0.1"></input>
-        </div>
+        <div class="inspector">
+            <div class="control-group-container">
+                <div class="control-group">
+                    <h4>Position</h4>
+                    <label for="x-position">x</label>
+                    <input id="x-position" type="number" value="0" step="0.1"></input>
+                    <label for="y-position">y</label>
+                    <input id="y-position" type="number" value="0" step="0.1"></input>
+                    <label for="z-position">z</label>
+                    <input id="z-position" type="number" value="0" step="0.1"></input>
+                </div>
 
-        <div class="control-group">
-            <h4>Rotation</h4>
-            <label for="x-rotation">x</label>
-            <input id="x-rotation" type="number" value="0" step="10"></input>
-            <label for="y-rotation">y</label>
-            <input id="y-rotation" type="number" value="0" step="10"></input>
-            <label for="z-rotation">z</label>
-            <input id="z-rotation" type="number" value="0" step="10"></input>
+                <div class="control-group">
+                    <h4>Scale</h4>
+                    <label for="x-scale">x</label>
+                    <input id="x-scale" type="number" value="1" step="0.1"></input>
+                    <label for="y-scale">y</label>
+                    <input id="y-scale" type="number" value="1" step="0.1"></input>
+                    <label for="z-scale">z</label>
+                    <input id="z-scale" type="number" value="1" step="0.1"></input>
+                </div>
+
+                <div class="control-group">
+                    <h4>Rotation</h4>
+                    <label for="x-rotation">x</label>
+                    <input id="x-rotation" type="number" value="0" step="10"></input>
+                    <label for="y-rotation">y</label>
+                    <input id="y-rotation" type="number" value="0" step="10"></input>
+                    <label for="z-rotation">z</label>
+                    <input id="z-rotation" type="number" value="0" step="10"></input>
+                </div>
+            </div>
+
+            <div class="control-group-container">
+                <div class="control-group">
+                    <h4>Camera Position</h4>
+                    <label for="x-camera-position">x</label>
+                    <input id="x-camera-position" type="number" value="0" step="0.1" disabled></input>
+                    <label for="y-camera-position">y</label>
+                    <input id="y-camera-position" type="number" value="0" step="0.1" disabled></input>
+                    <label for="z-camera-position">z</label>
+                    <input id="z-camera-position" type="number" value="0" step="0.1" disabled></input>
+                </div>
+
+                <div class="control-group">
+                    <h4>Camera Rotation</h4>
+                    <label for="x-camera-rotation">x</label>
+                    <input id="x-camera-rotation" type="number" value="0" step="0.1" disabled></input>
+                    <label for="y-camera-rotation">y</label>
+                    <input id="y-camera-rotation" type="number" value="0" step="0.1" disabled></input>
+                    <label for="z-camera-rotation">z</label>
+                    <input id="z-camera-rotation" type="number" value="0" step="0.1" disabled></input>
+                </div>
+            </div>
+
+            <div class="control-group-container">
+                <div class="control-group">
+                    <h4>U</h4>
+                    <label for="u-x-component">x</label>
+                    <input id="u-x-component" type="number" value="0" step="0.1" disabled></input>
+                    <label for="u-y-component">y</label>
+                    <input id="u-y-component" type="number" value="0" step="0.1" disabled></input>
+                    <label for="u-z-component">z</label>
+                    <input id="u-z-component" type="number" value="0" step="0.1" disabled></input>
+                </div>
+
+                <div class="control-group">
+                    <h4>V</h4>
+                    <label for="v-x-component">x</label>
+                    <input id="v-x-component" type="number" value="0" step="0.1" disabled></input>
+                    <label for="v-y-component">y</label>
+                    <input id="v-y-component" type="number" value="0" step="0.1" disabled></input>
+                    <label for="v-z-component">z</label>
+                    <input id="v-z-component" type="number" value="0" step="0.1" disabled></input>
+                </div>
+
+                <div class="control-group">
+                    <h4>N</h4>
+                    <label for="n-x-component">x</label>
+                    <input id="n-x-component" type="number" value="0" step="0.1" disabled></input>
+                    <label for="n-y-component">y</label>
+                    <input id="n-y-component" type="number" value="0" step="0.1" disabled></input>
+                    <label for="n-z-component">z</label>
+                    <input id="n-z-component" type="number" value="0" step="0.1" disabled></input>
+                </div>
+            </div>
+
+            <div class="control-group-container">
+                <div class="control-group">
+                    <h4>Projection</h4>
+                    <label for="fov">Field of view (degrees)</label>
+                    <input id="fov" type="number" value="90" step="5"></input>
+                    <label for="aspectRatio">Aspect Ratio</label>
+                    <input id="aspectRatio" type="number" disabled></input>
+                    <label for="near">Near</label>
+                    <input id="near" type="number" value="0.1" step="0.1"></input>
+                    <label for="far">Far</label>
+                    <input id="far" type="number" value="10" step="1"></input>
+                </div>
+            </div>
+
+            <label for="object">Select a file (.obj)</label>
+            <input type="file" id="object" name="avatar" accept=".obj" />
+            <pre></pre>
         </div>
     </div>
-
-    <div class="control-group-container">
-        <div class="control-group">
-            <h4>Camera Position</h4>
-            <label for="x-camera-position">x</label>
-            <input id="x-camera-position" type="number" value="0" step="0.1" disabled></input>
-            <label for="y-camera-position">y</label>
-            <input id="y-camera-position" type="number" value="0" step="0.1" disabled></input>
-            <label for="z-camera-position">z</label>
-            <input id="z-camera-position" type="number" value="0" step="0.1" disabled></input>
-        </div>
-
-        <div class="control-group">
-            <h4>Camera Rotation</h4>
-            <label for="x-camera-rotation">x</label>
-            <input id="x-camera-rotation" type="number" value="0" step="0.1" disabled></input>
-            <label for="y-camera-rotation">y</label>
-            <input id="y-camera-rotation" type="number" value="0" step="0.1" disabled></input>
-            <label for="z-camera-rotation">z</label>
-            <input id="z-camera-rotation" type="number" value="0" step="0.1" disabled></input>
-        </div>
-    </div>
-
-    <div class="control-group-container">
-        <div class="control-group">
-            <h4>U</h4>
-            <label for="u-x-component">x</label>
-            <input id="u-x-component" type="number" value="0" step="0.1" disabled></input>
-            <label for="u-y-component">y</label>
-            <input id="u-y-component" type="number" value="0" step="0.1" disabled></input>
-            <label for="u-z-component">z</label>
-            <input id="u-z-component" type="number" value="0" step="0.1" disabled></input>
-        </div>
-
-        <div class="control-group">
-            <h4>V</h4>
-            <label for="v-x-component">x</label>
-            <input id="v-x-component" type="number" value="0" step="0.1" disabled></input>
-            <label for="v-y-component">y</label>
-            <input id="v-y-component" type="number" value="0" step="0.1" disabled></input>
-            <label for="v-z-component">z</label>
-            <input id="v-z-component" type="number" value="0" step="0.1" disabled></input>
-        </div>
-
-        <div class="control-group">
-            <h4>N</h4>
-            <label for="n-x-component">x</label>
-            <input id="n-x-component" type="number" value="0" step="0.1" disabled></input>
-            <label for="n-y-component">y</label>
-            <input id="n-y-component" type="number" value="0" step="0.1" disabled></input>
-            <label for="n-z-component">z</label>
-            <input id="n-z-component" type="number" value="0" step="0.1" disabled></input>
-        </div>
-    </div>
-
-    <div class="control-group-container">
-        <div class="control-group">
-            <h4>Projection</h4>
-            <label for="fov">Field of view (degrees)</label>
-            <input id="fov" type="number" value="90" step="5"></input>
-            <label for="aspectRatio">Aspect Ratio</label>
-            <input id="aspectRatio" type="number" disabled></input>
-            <label for="near">Near</label>
-            <input id="near" type="number" value="0.1" step="0.1"></input>
-            <label for="far">Far</label>
-            <input id="far" type="number" value="10" step="1"></input>
-        </div>
-    </div>
-
-    <label for="object">Select a file (.obj)</label>
-    <input disabled type="file" id="object" name="avatar" accept=".obj" />
-    <pre></pre>
 </body>
-
 </html>

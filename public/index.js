@@ -116,7 +116,8 @@ const main = async () => {
     const sceneObject2 = new SceneObject(shape2.vertices, shape2.indices, shape2.drawMode);
     scene.addObject(sceneObject2);
 
-    const camera = new Camera(new Vector3(-2, 2, -1), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
+    const camera = new Camera(new Vector3(2, 2, -2), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
+    camera.rotate(new Vector3(-45, -20, 0));
 
     const cameraState = {
         position: bindInputVector3('#x-camera-position', '#y-camera-position', '#z-camera-position', camera.position),
@@ -132,7 +133,7 @@ const main = async () => {
      * @param {MouseEvent} e
      */
     const updatePosition = (e) => {
-        camera.rotate(new Vector3(e.movementX, e.movementY, 0));
+        camera.rotate(new Vector3(e.movementX, -e.movementY, 0));
     };
 
     gl.canvas.addEventListener('click', () => gl.canvas.requestPointerLock());
