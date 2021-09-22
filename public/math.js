@@ -489,6 +489,24 @@ class Vector3 extends Vector {
     static get z() {
         return new Vector3(0, 0, 1);
     }
+
+    /**
+     * Returns the angle between two vectors in degrees.
+     *
+     * @param {Vector3} a
+     * @param {Vector3} b
+     * @returns {number}
+     */
+    static angle(a, b) {
+        const lengthA = a.length;
+        const lengthB = b.length;
+
+        if (!lengthA || !lengthB) {
+            throw Error('Cannot calculate the angle between two vectors when one vector has a length of zero');
+        }
+
+        return MathUtils.radiansToDegrees(Math.acos(a.dot(b) / (lengthA * lengthB)));
+    }
 }
 
 class Vector4 extends Vector {

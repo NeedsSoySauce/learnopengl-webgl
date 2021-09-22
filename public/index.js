@@ -1,4 +1,4 @@
-import { Matrix, Vector, Vector3, Vector4 } from './math.js';
+import { MathUtils, Matrix, Vector, Vector3, Vector4 } from './math.js';
 import { Scene, SceneObject } from './scene.js';
 import { ShaderUtils } from './shader.js';
 import { RenderLoop } from './render.js';
@@ -187,8 +187,6 @@ const main = async () => {
         },
         false
     );
-
-    camera.setTarget(new Vector3(0, 0, 0));
 
     let x = 0;
     const renderFunction = (deltaTime) => {

@@ -67,7 +67,7 @@ class Camera {
      * @returns {Vector3}
      */
     _setRotation(rotation) {
-        const yRotation = MathUtils.clamp(rotation.y, -90, 90);
+        const yRotation = MathUtils.clamp(rotation.y, -89, 89);
         const newRotation = new Vector3(rotation.x, yRotation, 0);
         this.deltaRotation = newRotation.add(this.rotation.multiply(-1));
         this.rotation = newRotation;
@@ -77,6 +77,7 @@ class Camera {
      * @param {Vector3} target
      */
     setTarget(target) {
+        // TODO: fix rotation past +- 90 degrees
         this.target = target.add(this.position.multiply(-1));
         this.deltaRotation = Vector3.zero;
         this.rotation = Vector3.zero;
