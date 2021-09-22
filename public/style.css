@@ -30,6 +30,15 @@ canvas {
     width: 72px;
 }
 
+input {
+    margin-bottom: 3px;
+    vertical-align: middle;
+}
+
+label {
+    vertical-align: middle;
+}
+
 .error {
     color: red;
 }
