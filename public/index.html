@@ -116,15 +116,53 @@
 
             <div class="control-group-container">
                 <div class="control-group">
-                    <h4>Projection</h4>
-                    <label for="fov">Field of view (degrees)</label>
+                    <h4>Field of view</h4>
+                    <label for="fov">Degrees</label>
                     <input id="fov" type="number" value="90" step="5"></input>
-                    <label for="aspectRatio">Aspect Ratio</label>
+                </div>
+
+                <div class="control-group">
+                    <h4>Aspect Ratio</h4>
+                    <label for="aspectRatio">Width/Height</label>
                     <input id="aspectRatio" type="number" disabled></input>
-                    <label for="near">Near</label>
+                </div>
+
+                <div class="control-group">
+                    <h4>Near</h4>
+                    <label for="near">z</label>
                     <input id="near" type="number" value="0.1" step="0.1"></input>
-                    <label for="far">Far</label>
+                </div>
+
+                <div class="control-group">
+                    <h4>Far</h4>
+                    <label for="far">z</label>
                     <input id="far" type="number" value="10" step="1"></input>
+                </div>
+            </div>
+
+            <div class="control-group-container">
+                <div class="control-group">
+                    <h4>Culling</h4>
+                    <label for="culling">Enable</label>
+                    <input id="culling" type="checkbox" checked></input>
+                </div>
+
+                <div class="control-group">
+                    <h4>Cull Face</h4>
+                    <label for="cull-face">Face</label>
+                    <select id="cull-face">
+                        <option value="front">Front</option>
+                        <option value="back" selected>Back</option>
+                        <option value="front-and-back">Front and back</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <h4>Front Face Direction</h4>
+                    <input type="radio" id="front-face-cw" name="front-face" value="cw" checked>
+                    <label for="front-face-cw">CW</label>
+                    <input type="radio" id="front-face-ccw" name="front-face" value="ccw">
+                    <label for="front-face-ccw">CCW</label>
                 </div>
             </div>
 

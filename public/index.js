@@ -61,6 +61,51 @@ const registerKeyHandlers = () => {
     return keys;
 };
 
+/**
+ * @param {WebGL2RenderingContext} gl
+ */
+const registerCullingInputs = (gl) => {
+    const toggleCullingCheckbox = document.querySelector('#culling');
+    const cullFaceSelect = document.querySelector('#cull-face');
+    const cullFrontFaceCW = document.querySelector('#front-face-cw');
+    const cullFrontFaceCCW = document.querySelector('#front-face-ccw');
+
+    toggleCullingCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            gl.enable(gl.CULL_FACE);
+            cullFaceSelect.disabled = false;
+            cullFrontFaceCW.disabled = false;
+            cullFrontFaceCCW.disabled = false;
+        } else {
+            gl.disable(gl.CULL_FACE);
+            cullFaceSelect.disabled = true;
+            cullFrontFaceCW.disabled = true;
+            cullFrontFaceCCW.disabled = true;
+        }
+    });
+
+    cullFaceSelect.addEventListener('change', (e) => {
+        switch (e.target.value) {
+            case 'front':
+                gl.cullFace(gl.FRONT);
+                break;
+            case 'back':
+                gl.cullFace(gl.BACK);
+                break;
+            case 'front-and-back':
+                gl.cullFace(gl.FRONT_AND_BACK);
+                break;
+        }
+    });
+
+    cullFrontFaceCW.addEventListener('click', () => gl.frontFace(gl.CW));
+    cullFrontFaceCCW.addEventListener('click', () => gl.frontFace(gl.CCW));
+
+    gl.enable(gl.CULL_FACE);
+    gl.cullFace(gl.BACK);
+    gl.frontFace(gl.CW);
+};
+
 const main = async () => {
     const vertexShaderSource = await fetchText('./shaders/vertex.glsl');
     const fragmentShaderSource = await fetchText('./shaders/fragment.glsl');
@@ -275,6 +320,8 @@ const main = async () => {
             selectSceneObject(sceneObject);
         });
     });
+
+    registerCullingInputs(gl);
 
     const data = await fetchText('./geometry/toon.obj');
     const shapeData = ObjectFileLoader.fromText(data);
