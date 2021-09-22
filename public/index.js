@@ -106,6 +106,33 @@ const registerCullingInputs = (gl) => {
     gl.frontFace(gl.CW);
 };
 
+/**
+ *
+ * @param {Camera} camera
+ */
+const registerCameraInputs = (camera) => {
+    const cameraState = {
+        position: bindInputVector3('#x-camera-position', '#y-camera-position', '#z-camera-position', camera.position),
+        rotation: bindInputVector3('#x-camera-rotation', '#y-camera-rotation', '#z-camera-rotation', camera.rotation),
+        u: bindInputVector3('#u-x-component', '#u-y-component', '#u-z-component', camera.u),
+        v: bindInputVector3('#v-x-component', '#v-y-component', '#v-z-component', camera.u),
+        n: bindInputVector3('#n-x-component', '#n-y-component', '#n-z-component', camera.u)
+    };
+
+    const updateCameraState = () => {
+        cameraState.position.value = camera.position;
+        cameraState.rotation.value = camera.rotation;
+        cameraState.u.value = camera.u;
+        cameraState.v.value = camera.v;
+        cameraState.n.value = camera.n;
+    };
+
+    return {
+        cameraState,
+        updateCameraState
+    };
+};
+
 const main = async () => {
     const vertexShaderSource = await fetchText('./shaders/vertex.glsl');
     const fragmentShaderSource = await fetchText('./shaders/fragment.glsl');
@@ -171,13 +198,7 @@ const main = async () => {
     const camera = new Camera(new Vector3(2, 2, -2), new Vector3(0, 0, 1), new Vector3(0, 1, 0), 5);
     camera.rotate(new Vector3(-45, -20, 0));
 
-    const cameraState = {
-        position: bindInputVector3('#x-camera-position', '#y-camera-position', '#z-camera-position', camera.position),
-        rotation: bindInputVector3('#x-camera-rotation', '#y-camera-rotation', '#z-camera-rotation', camera.rotation),
-        u: bindInputVector3('#u-x-component', '#u-y-component', '#u-z-component', camera.u),
-        v: bindInputVector3('#v-x-component', '#v-y-component', '#v-z-component', camera.u),
-        n: bindInputVector3('#n-x-component', '#n-y-component', '#n-z-component', camera.u)
-    };
+    const { updateCameraState } = registerCameraInputs(camera);
 
     const { isKeyDown, unregister, listen } = registerKeyHandlers();
 
@@ -212,7 +233,7 @@ const main = async () => {
             KeyA: (deltaTime) => camera.strafeLeft(deltaTime * speed),
             KeyS: (deltaTime) => camera.backward(deltaTime * speed),
             KeyD: (deltaTime) => camera.strafeRight(deltaTime * speed),
-            ControlLeft: (deltaTime) => camera.strafeDown(deltaTime * speed),
+            ShiftLeft: (deltaTime) => camera.strafeDown(deltaTime * speed),
             Space: (deltaTime) => camera.strafeUp(deltaTime * speed)
             // ControlLeft: (deltaTime) => camera.moveDown(deltaTime),
             // Space: (deltaTime) => camera.moveUp(deltaTime)
@@ -248,12 +269,7 @@ const main = async () => {
 
     let x = 0;
     const renderFunction = (deltaTime) => {
-        cameraState.position.value = camera.position;
-        cameraState.rotation.value = camera.rotation;
-        cameraState.u.value = camera.u;
-        cameraState.v.value = camera.v;
-        cameraState.n.value = camera.n;
-
+        updateCameraState();
         if (document.pointerLockElement === gl.canvas) {
             for (const [key, callback] of keyHandlers) {
                 if (isKeyDown(key)) {
