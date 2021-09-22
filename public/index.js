@@ -109,8 +109,8 @@ const main = async () => {
 
     const scene = new Scene();
     const shape = cube();
-    const sceneObject = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
-    scene.addObject(sceneObject);
+    const sceneObject1 = new SceneObject(shape.vertices, shape.indices, shape.drawMode);
+    scene.addObject(sceneObject1);
 
     const shape2 = plane();
     const sceneObject2 = new SceneObject(shape2.vertices, shape2.indices, shape2.drawMode);
@@ -208,10 +208,9 @@ const main = async () => {
 
         // x += deltaTime;
         // transform.rotation.y = animate ? (x * 45) % 360 : transform.rotation.y;
-        sceneObject.setPosition(transform.position.value);
-        sceneObject.setScale(transform.scale.value);
-        sceneObject.setRotation(transform.rotation.value);
-        gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
+        sceneObject1.setPosition(transform.position.value);
+        sceneObject1.setScale(transform.scale.value);
+        sceneObject1.setRotation(transform.rotation.value);
         gl.uniformMatrix4fv(viewMatrixAttributeLocation, false, camera.viewMatrixArray);
         gl.uniformMatrix4fv(
             projectionMatrixAttributeLocation,
@@ -220,6 +219,7 @@ const main = async () => {
         );
 
         for (const sceneObject of scene.objects) {
+            gl.uniformMatrix4fv(modelMatrixAttributeLocation, false, sceneObject.modelMatrixArray);
             ShaderUtils.draw(gl, sceneObject.vertices, sceneObject.indices, sceneObject.drawMode);
         }
     };

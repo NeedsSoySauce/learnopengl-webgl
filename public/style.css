@@ -36,6 +36,7 @@ canvas {
 
 .content {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .view {
@@ -43,5 +44,5 @@ canvas {
 }
 
 .inspector {
-    width: calc(min(100%, 900px));
+    min-width: 900px;
 }
