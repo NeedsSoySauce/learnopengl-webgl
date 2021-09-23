@@ -330,7 +330,7 @@ const main = async () => {
         if (e.target.files.length !== 1) return;
         const file = e.target.files[0];
 
-        ObjectFileLoader.load(file).then((shapeData) => {
+        ObjectFileLoader.fromFile(file).then((shapeData) => {
             const sceneObject = new SceneObject(shapeData.vertices, shapeData.indices, shapeData.drawMode);
             scene.addObject(sceneObject);
             selectSceneObject(sceneObject);
@@ -339,11 +339,11 @@ const main = async () => {
 
     registerCullingInputs(gl);
 
-    const data = await fetchText('./geometry/toon.obj');
-    const shapeData = ObjectFileLoader.fromText(data, true);
-    const sceneObject = new SceneObject(shapeData.vertices, shapeData.indices, shapeData.drawMode);
-    scene.addObject(sceneObject);
-    selectSceneObject(sceneObject);
+    ObjectFileLoader.fromPath('./assets/girl.obj').then((shapeData) => {
+        const sceneObject = new SceneObject(shapeData.vertices, shapeData.indices, shapeData.drawMode);
+        scene.addObject(sceneObject);
+        selectSceneObject(sceneObject);
+    });
 
     renderLoopToggleHtmlButtonElement.click();
 };

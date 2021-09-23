@@ -1,42 +1,92 @@
 class ObjectFileLoader {
+    static _elementParsers = {
+        v: { flatten: true, parser: ObjectFileLoader._parseFloats },
+        vt: { flatten: true, parser: ObjectFileLoader._parseFloats },
+        vn: { flatten: true, parser: ObjectFileLoader._parseFloats },
+        f: { flatten: false, parser: ObjectFileLoader._parseFace },
+        mtllib: { flatten: false, parser: ObjectFileLoader._parseMaterialLibrary }
+    };
+
+    /**
+     * @param {string[]} items
+     */
+    static _parseFloats(items) {
+        return items.map(parseFloat);
+    }
+
+    /**
+     * @param {string[]} items
+     */
+    static _parseFace(items) {
+        return items.map((item) => {
+            const [v, vt, vn] = item.split('/').map(Number);
+            return {
+                vi: v - 1,
+                vti: vt - 1,
+                vni: vn - 1
+            };
+        });
+    }
+
+    /**
+     * @param {string[]} items
+     */
+    static _parseMaterialLibrary(items) {
+        return items[0];
+    }
+
+    /**
+     * @param {string} path
+     */
+    static async _fetchText(path) {
+        return await (await fetch(path)).text();
+    }
+
+    /**
+     * @param {string} path
+     */
+    static _loadMaterial(path) {
+        return ObjectFileLoader._fetchText(path);
+    }
+
     /**
      * @param {string} text
      * @param {boolean} wireframe
-     * @returns
+     * @param {string} materialsPath
+     * @param {string} texturesPath
      */
-    static fromText(text, wireframe = false) {
+    static async fromText(text, wireframe = false, materialsPath = 'assets', texturesPath = 'assets') {
         const lines = text.split('\n');
-        const vertices = lines
-            .filter((line) => line.startsWith('v '))
-            .flatMap((line) => line.split(' ').splice(1).map(Number));
-        const textureCoordinates = lines
-            .filter((line) => line.startsWith('vt '))
-            .flatMap((line) => line.split(' ').splice(1).map(Number));
-        const vertexNormals = lines
-            .filter((line) => line.startsWith('vn '))
-            .flatMap((line) => line.split(' ').splice(1).map(Number));
-        const faces = lines
-            .filter((line) => line.startsWith('f '))
-            .map((line) =>
-                line
-                    .split(' ')
-                    .splice(1)
-                    .map((elem) => {
-                        const [v, vt, vn] = elem.split('/').map(Number);
-                        return {
-                            vertexIndex: v - 1,
-                            textureIndex: vt - 1,
-                            normalIndex: vn - 1
-                        };
-                    })
-            );
+
+        const elements = Object.fromEntries(Object.keys(ObjectFileLoader._elementParsers).map((key) => [key, []]));
+
+        for (const line of lines) {
+            const [type, ...items] = line.split(' ');
+
+            if (!ObjectFileLoader._elementParsers[type]) continue;
+
+            const { flatten, parser } = ObjectFileLoader._elementParsers[type];
+
+            if (flatten) {
+                elements[type].push(...parser(items));
+            } else {
+                elements[type].push(parser(items));
+            }
+        }
+
+        console.log(elements);
+
+        const vertices = elements.v;
+        const textureCoordinates = elements.vt;
+        const vertexNormals = elements.vn;
+        const faces = elements.f;
 
         let drawMode = WebGL2RenderingContext.TRIANGLES;
         let indices;
         if (wireframe) {
             drawMode = WebGL2RenderingContext.LINES;
             indices = faces.flatMap((face) => {
-                const faceIndices = face.map((elem) => elem.vertexIndex);
+                const faceIndices = face.map((elem) => elem.vi);
 
                 const elems = [faceIndices[0], faceIndices[faceIndices.length - 1]];
                 for (let i = 1; i < faceIndices.length; i++) {
@@ -47,30 +97,41 @@ class ObjectFileLoader {
                 return elems;
             });
         } else {
-            indices = faces.flatMap((face) => face.map((elem) => elem.vertexIndex));
+            indices = faces.flatMap((face) => face.map((elem) => elem.vi));
         }
 
-        // console.log('lines', lines);
-        // console.log('vertices', vertices);
-        // console.log('textureCoordinates', textureCoordinates);
-        // console.log('vertexNormals', vertexNormals);
-        // console.log('faces', faces);
-        // console.log('indices', indices);
+        console.log('lines', lines);
+        console.log('vertices', vertices);
+        console.log('textureCoordinates', textureCoordinates);
+        console.log('vertexNormals', vertexNormals);
+        console.log('faces', faces);
+        console.log('indices', indices);
 
         return new ShapeData(vertices, indices, drawMode);
+    }
+
+    /**
+     * @param {string} path
+     * @param {boolean} wireframe
+     */
+    static async fromPath(path, wireframe = false) {
+        const text = await ObjectFileLoader._fetchText(path);
+        const assetPath = new URL(`${window.location.origin}/${path.split('/').slice(0, -1).join('/')}`).href;
+        console.log(assetPath);
+        return ObjectFileLoader.fromText(text, wireframe);
     }
 
     /**
      * @param {File} file
      * @returns {Promise<ShapeData>}
      */
-    static async load(file) {
+    static async fromFile(file) {
         const reader = new FileReader();
         reader.readAsText(file);
 
         const executor = (resolve, reject) => {
             reader.addEventListener('load', () => {
-                resolve(ObjectFileLoader.fromText(reader.result));
+                ObjectFileLoader.fromText(reader.result).then(resolve);
             });
         };
 
